@@ -1,5 +1,5 @@
-import { Dirent } from "fs";
-import { GenCrudSettings } from "../genCrud";
+import type { Dirent } from "fs";
+import type { GenCrudSettings } from "../genCrud";
 
 export const isModelsDirectory = (
   dirent: Dirent,

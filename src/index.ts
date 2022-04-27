@@ -1,1 +1,1 @@
-export { genCrud } from "./genCrud";
+export { genCrud as wheelIt } from "./genCrud";

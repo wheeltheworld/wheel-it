@@ -27,7 +27,7 @@
     "importsNotUsedAsValues": "error",
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    "declaration": false,
+    "declaration": true,
     "noEmitOnError": true,
     "pretty": true,
     "downlevelIteration": true,

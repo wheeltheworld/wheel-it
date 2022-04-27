@@ -1,10 +1,14 @@
 {
-  "name": "wheel.js",
-  "version": "1.0.0",
+  "name": "wheel-it",
+  "version": "0.0.0",
   "main": "index.js",
+  "types": "index.d.ts",
   "repository": "git@github.com:wheeltheworld/wheel.js.git",
   "author": "martinmunillas <martinmunillas@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc && cp package.json dist/package.json"
+  },
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.27",
