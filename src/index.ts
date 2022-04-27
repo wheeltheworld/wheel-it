@@ -1,0 +1,1 @@
+export { genCrud } from "./genCrud";
