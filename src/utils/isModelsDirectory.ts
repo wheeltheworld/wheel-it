@@ -5,5 +5,5 @@ export const isModelsDirectory = (
   dirent: Dirent,
   settings: GenCrudSettings
 ) => {
-  return dirent.isDirectory() && dirent.name.match(settings.modelsSubdir);
+  return dirent.isDirectory() && dirent.name.match(settings.modelsDir);
 };

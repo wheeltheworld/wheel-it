@@ -2,19 +2,20 @@ import type { RequestHandler } from "express";
 import { readdirSync } from "fs";
 import { BaseEntity } from "typeorm";
 import { isModelsDirectory } from "./utils/isModelsDirectory";
+import callsite from "callsite";
 
 export interface GenCrudSettings {
-  modules: string;
-  modelsSubdir: string | RegExp;
+  modules: string[];
+  modelsDir: string | RegExp;
 }
 
 interface Module {
-  models: BaseEntity[];
+  models: typeof BaseEntity[];
 }
 
 const defaultSettings: GenCrudSettings = {
-  modules: "modules",
-  modelsSubdir: "models",
+  modules: [],
+  modelsDir: "models",
 };
 
 export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
@@ -23,7 +24,10 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
     ...options,
   };
 
-  const dirents = readdirSync(settings.modules, {
+  const root = callsite()[0].getFileName();
+  console.log(root);
+
+  const dirents = readdirSync(`${root}${settings.modules[0]}`, {
     withFileTypes: true,
   });
 
@@ -43,14 +47,18 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
             `${settings.modules}/${dirent.name}/${dir.name}`,
             { withFileTypes: true }
           )) {
-            if (file.isFile()) {
-              const model =
-                require(`${settings.modules}/${dirent.name}/${dir.name}/${file.name}`).default;
-              if (
-                model.prototype instanceof BaseEntity &&
-                model.prototype.wheel
-              ) {
-                modules[dirent.name].models.push(model);
+            if (file.isFile() && file.name.match(/\.(jt)s$/)) {
+              const exported = require(`${settings.modules}/${dirent.name}/${dir.name}/${file.name}`);
+              for (const model of Object.values(exported) as Function[]) {
+                if (
+                  model &&
+                  "prototype" in model &&
+                  model.prototype instanceof BaseEntity &&
+                  // @ts-ignore
+                  model.prototype.wheel
+                ) {
+                  modules[dirent.name].models.push(model as typeof BaseEntity);
+                }
               }
             }
           }

@@ -7,9 +7,11 @@
   "author": "martinmunillas <martinmunillas@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && cp package.json dist/package.json"
+    "build": "tsc && cp package.json dist/package.json",
+    "test": "yarn build && find ../admin/node_modules/wheel-it -mindepth 1 -maxdepth 1 -not -name node_modules -exec rm -rf '{}' \\; && cp -r ./dist/* ../admin/node_modules/wheel-it/"
   },
   "devDependencies": {
+    "@types/callsite": "^1.0.31",
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.27",
     "@types/react": "^18.0.7",
@@ -19,6 +21,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
+    "callsite": "^1.0.0",
     "dotenv": "^16.0.0",
     "express": "^4.18.0",
     "react": "^18.0.0",
