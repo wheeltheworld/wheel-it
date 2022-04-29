@@ -33,7 +33,7 @@
     "downlevelIteration": true,
     "importHelpers": true,
     "baseUrl": "./",
-    "incremental": true
+    "incremental": false
   },
   "exclude": ["node_modules"],
   "include": ["./src/**/*.tsx", "./src/**/*.ts"]
