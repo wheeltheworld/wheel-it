@@ -1,17 +1,28 @@
-import type { RequestHandler } from "express";
+import { RequestHandler, Router } from "express";
 import { readdirSync } from "fs";
 import type { BaseEntity } from "typeorm";
 import { isModelsDirectory } from "./utils/isModelsDirectory";
 import callsite from "callsite";
 import { dirname, join } from "path";
+import { genCrudModule } from "./genCrudModule";
 
 export interface GenCrudSettings {
   modules: string[];
   modelsDir: string | RegExp;
 }
-interface Module {
+
+export interface Wheel {
+  editables?: string[];
+  getables?: string[];
+  sortables?: string[];
+}
+export declare class CrudModel extends BaseEntity {
+  editables: string[];
+  wheel: Wheel;
+}
+export interface Module {
   name: string;
-  models: typeof BaseEntity[];
+  models: typeof CrudModel[];
 }
 
 const defaultSettings: GenCrudSettings = {
@@ -24,6 +35,8 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
     ...defaultSettings,
     ...options,
   };
+
+  const router = Router();
 
   // we get where the function is called from
   // so we can build relative paths
@@ -54,11 +67,9 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
         }).filter((file) => file.isFile())) {
           if (file.name.match(/\.[jt]s$/)) {
             const exported = require(`${moduleDir}/${dir.name}/${file.name}`);
-            for (const model of Object.values(exported) as (new () => {
-              wheel?: boolean;
-            })[]) {
+            for (const model of Object.values(exported) as typeof CrudModel[]) {
               if (model && "prototype" in model && new model().wheel) {
-                modules[name].models.push(model as typeof BaseEntity);
+                modules[name].models.push(model as typeof CrudModel);
               }
             }
           }
@@ -66,11 +77,9 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
       }
     }
   }
-  console.log(
-    // @ts-ignore
-    modules.admins.models[0].editables
-  );
-  return (_req, _res, next) => {
-    next();
-  };
+
+  for (const mod of Object.values(modules)) {
+    router.use(`/module/${mod.name}`, genCrudModule(mod));
+  }
+  return router;
 };
