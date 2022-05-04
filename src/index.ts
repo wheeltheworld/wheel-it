@@ -1,2 +1,2 @@
 export { genCrud as wheelIt } from "./genCrud";
-export { Entity, Editable } from "./decorators";
+export { Entity, Editable, GetableBy } from "./decorators";

@@ -6,19 +6,29 @@ import callsite from "callsite";
 import { dirname, join } from "path";
 import { genCrudModule } from "./genCrudModule";
 
+type PromiseOrNot<T> = T | Promise<T>;
+
 export interface GenCrudSettings {
   modules: string[];
   modelsDir: string | RegExp;
 }
 
 export interface Wheel {
-  editables?: string[];
-  getables?: string[];
-  sortables?: string[];
+  isOkay: boolean;
+  editables: string[];
+  getables: string[];
+  sortables: string[];
+  hiddens: string[];
 }
 export declare class CrudModel extends BaseEntity {
-  editables: string[];
   wheel: Wheel;
+  hideHiddens(): void;
+  beforeCreate?(): PromiseOrNot<void>;
+  afterCreate?(): PromiseOrNot<void>;
+  beforeUpdate?(): PromiseOrNot<void>;
+  afterUpdate?(): PromiseOrNot<void>;
+  beforeDelete?(): PromiseOrNot<void>;
+  afterDelete?(): PromiseOrNot<void>;
 }
 export interface Module {
   name: string;
@@ -68,7 +78,11 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
           if (file.name.match(/\.[jt]s$/)) {
             const exported = require(`${moduleDir}/${dir.name}/${file.name}`);
             for (const model of Object.values(exported) as typeof CrudModel[]) {
-              if (model && "prototype" in model && new model().wheel) {
+              if (
+                model &&
+                model instanceof Function &&
+                model.prototype.wheel?.isOkay
+              ) {
                 modules[name].models.push(model as typeof CrudModel);
               }
             }
@@ -78,8 +92,20 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
     }
   }
 
+  router.get(`/modules/list`, (_req, res) => {
+    return res.json(
+      Object.values(modules).reduce(
+        (acc, mod) => ({ ...acc, [mod.name]: `/module/${mod.name}` }),
+        {}
+      )
+    );
+  });
   for (const mod of Object.values(modules)) {
-    router.use(`/module/${mod.name}`, genCrudModule(mod));
+    const [middleware, endpoints] = genCrudModule(mod);
+    router.get(`/module/${mod.name}/list`, (_req, res) => {
+      return res.json(endpoints);
+    });
+    router.use(`/module/${mod.name}`, middleware);
   }
   return router;
 };

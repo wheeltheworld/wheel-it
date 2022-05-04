@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import type { CrudModel } from "./genCrud";
 
-export const getEntity =
+export const deleteEntity =
   (model: typeof CrudModel, key: string): RequestHandler =>
   async (req, res) => {
     const entity = await model.findOne({
@@ -12,6 +12,10 @@ export const getEntity =
         .status(404)
         .send(`${model.name} with ${key}: '${req.params.value}' not found`);
     }
-    entity.hideHiddens();
-    return res.json(entity);
+
+    await entity.beforeDelete?.();
+    await entity.softRemove();
+    await entity.afterDelete?.();
+
+    return res.json(true);
   };

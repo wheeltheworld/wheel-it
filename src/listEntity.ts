@@ -1,8 +1,8 @@
 import type { RequestHandler } from "express";
-import type { BaseEntity } from "typeorm";
+import type { CrudModel } from "./genCrud";
 
 export const listEntity =
-  (model: typeof BaseEntity): RequestHandler =>
+  (model: typeof CrudModel): RequestHandler =>
   async (req, res) => {
     const limit = Number(req.query.limit) || 25;
     const offset = Number(req.query.page) * limit || 0;
@@ -10,6 +10,7 @@ export const listEntity =
       take: limit,
       skip: offset,
     });
+    items.map((item) => item.hideHiddens());
     return res.json({
       items,
       pages: Math.ceil(count / limit),
