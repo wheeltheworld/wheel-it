@@ -13,11 +13,12 @@ export const updateEntity =
         .status(404)
         .send(`${model.name} with ${key}: '${req.params.value}' not found`);
     }
-    const fields = getFields(model, "editables");
+    const fields = getFields(model);
     for (const field of fields) {
+      if (!field.editable) continue;
       if (
-        req.body.editable !== undefined &&
-        typeof req.body.editable !== field.type
+        req.body[field.name] !== undefined &&
+        typeof req.body[field.name] !== field.type
       ) {
         res
           .status(400)

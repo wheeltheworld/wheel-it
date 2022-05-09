@@ -4,7 +4,8 @@ import type { BaseEntity } from "typeorm";
 import { isModelsDirectory } from "./utils/isModelsDirectory";
 import callsite from "callsite";
 import { dirname, join } from "path";
-import { genCrudModule } from "./genCrudModule";
+import { genCrudModule } from "./genModuleCrud";
+import { genManifest } from "./genManifest";
 
 type PromiseOrNot<T> = T | Promise<T>;
 
@@ -92,20 +93,14 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
     }
   }
 
-  router.get(`/modules/list`, (_req, res) => {
-    return res.json(
-      Object.values(modules).reduce(
-        (acc, mod) => ({ ...acc, [mod.name]: `/module/${mod.name}` }),
-        {}
-      )
-    );
+  const manifest = genManifest(Object.values(modules));
+
+  router.get(`/manifest`, (_req, res) => {
+    return res.json(manifest);
   });
   for (const mod of Object.values(modules)) {
-    const [middleware, endpoints] = genCrudModule(mod);
-    router.get(`/module/${mod.name}/list`, (_req, res) => {
-      return res.json(endpoints);
-    });
-    router.use(`/module/${mod.name}`, middleware);
+    const middleware = genCrudModule(mod, manifest.modules[mod.name]);
+    router.use(`/module`, middleware);
   }
-  return router;
+  return Router().use("/_/api/", router);
 };

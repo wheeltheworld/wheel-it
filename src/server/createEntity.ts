@@ -6,9 +6,10 @@ import { getFields } from "./getFields";
 export const createEntity =
   (model: typeof CrudModel): RequestHandler =>
   async (req, res) => {
-    const fields = getFields(model, "editables");
+    const fields = getFields(model);
     const entity = model.create();
     for (const field of fields) {
+      if (!field.editable) continue;
       const value = req.body[field.name];
       if (typeof value !== field.type) {
         res.status(400).send(`invalid field ${field.name}`);
