@@ -1,5 +1,5 @@
 import React, { FormEventHandler, useEffect, useState } from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, FormControl, FormLabel } from "@chakra-ui/react";
 import DataField from "./DataField";
 import type { Field } from "src/shared/manifest";
 
@@ -33,12 +33,14 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
   return (
     <Box as="form" onSubmit={handleSubmit}>
       {fields.map((field) => (
-        <DataField
-          onChange={handleChange(field.name)}
-          value={data[field.name]}
-          key={field.name}
-          type={field.type}
-        />
+        <FormControl key={field.name}>
+          <FormLabel>{field.label || field.name}</FormLabel>
+          <DataField
+            onChange={handleChange(field.name)}
+            value={data[field.name]}
+            type={field.type}
+          />
+        </FormControl>
       ))}
     </Box>
   );

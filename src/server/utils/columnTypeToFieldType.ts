@@ -1,4 +1,4 @@
-import { Field } from "../fields";
+import { Field } from "../../shared/fields";
 import type { ColumnType } from "typeorm";
 
 export const columnTypeToFieldType = (columnType: ColumnType): string => {
@@ -13,5 +13,5 @@ export const columnTypeToFieldType = (columnType: ColumnType): string => {
     bool: Field.BOOLEAN,
     tinyint: Field.BOOLEAN,
   };
-  return columnTypeToFieldTypeMap[columnType.toString()] || "string";
+  return columnTypeToFieldTypeMap[columnType.toString()] || Field.STRING;
 };

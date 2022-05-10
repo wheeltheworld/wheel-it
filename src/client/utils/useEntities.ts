@@ -13,7 +13,7 @@ interface UseEntities {
 }
 
 interface List {
-  entities: string[];
+  items: any[];
   total: number;
   pages: number;
   amount: number;
@@ -39,9 +39,9 @@ export const useEntities = ({
       `${endpoint({
         moduleName,
         modelName,
-      })}?${sortBy ? `sortBy=${sortBy}` : ""}&${
-        sortOrder ? `sortOrder=${sortOrder}` : ""
-      }&limit=${amount}&page=${page}`
+      })}?${sortBy ? `sortBy=${sortBy}&` : ""}${
+        sortOrder ? `sortOrder=${sortOrder}&` : ""
+      }limit=${amount}&page=${page}`
     );
     setList(data);
     setLoading(false);

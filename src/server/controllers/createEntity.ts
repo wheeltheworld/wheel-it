@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import type { BaseEntity } from "typeorm";
-import type { CrudModel } from "./genCrud";
-import { getFields } from "./getFields";
+import type { CrudModel } from "../genCrud";
+import { getFields } from "../utils/getFields";
 
 export const createEntity =
   (model: typeof CrudModel): RequestHandler =>

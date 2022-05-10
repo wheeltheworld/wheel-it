@@ -1,12 +1,11 @@
 import { RequestHandler, Router } from "express";
 import type { ManifestModel } from "src/shared/manifest";
-import { createEntity } from "./createEntity";
-import { deleteEntity } from "./deleteEntity";
+import { createEntity } from "./controllers/createEntity";
+import { deleteEntity } from "./controllers/deleteEntity";
+import { listEntity } from "./controllers/listEntity";
+import { updateEntity } from "./controllers/updateEntity";
 import type { CrudModel } from "./genCrud";
-import { getEntity } from "./getEntity";
-import { listEntity } from "./listEntity";
-import { modelName } from "./utils/modelName";
-import { updateEntity } from "./updateEntity";
+import { getEntity } from "./controllers/getEntity";
 
 export const genModelCrud = (
   model: typeof CrudModel,
@@ -22,5 +21,5 @@ export const genModelCrud = (
     router.delete(`/${getable}/:value`, deleteEntity(model, getable));
   }
 
-  return Router().use(`/${modelName(model)}`, router);
+  return Router().use(`/${manifest.name}`, router);
 };

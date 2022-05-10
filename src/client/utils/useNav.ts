@@ -26,7 +26,7 @@ export const useNav = (): NavLinks => {
     for (const model of Object.values(mod.models)) {
       moduleLinks.push({
         label: model.name,
-        path: `/${moduleName}/${model.name}`,
+        path: `/_/${moduleName}/${model.name}`,
       });
     }
     nav[moduleName] = {

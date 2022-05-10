@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import type { CrudModel } from "./genCrud";
+import type { CrudModel } from "../genCrud";
 
 export const listEntity =
   (model: typeof CrudModel): RequestHandler =>

@@ -1,10 +1,10 @@
 import React from "react";
 import axios from "axios";
-import FormGenerator from "./FormGenerator";
 import { Button } from "@chakra-ui/react";
 import { useHistory, useParams } from "react-router-dom";
-import useManifest from "./utils/useManifest";
-import { useEntity } from "./utils/useEntity";
+import { useEntity } from "../utils/useEntity";
+import useManifest from "../utils/useManifest";
+import FormGenerator from "../components/FormGenerator";
 
 interface EditPageProps {
   moduleName: string;

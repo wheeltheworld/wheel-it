@@ -1,6 +1,6 @@
 import type { Manifest, ManifestModule } from "src/shared/manifest";
 import type { Module } from "./genCrud";
-import { getFields } from "./getFields";
+import { getFields } from "./utils/getFields";
 import { modelName } from "./utils/modelName";
 
 export const genManifest = (modules: Module[]): Manifest => {
@@ -14,12 +14,13 @@ export const genManifest = (modules: Module[]): Manifest => {
       models: {},
     };
     for (const model of m.models) {
-      mod.models[model.name] = {
+      mod.models[modelName(model)] = {
         name: modelName(model),
         getables: model.prototype.wheel.getables,
         fields: getFields(model),
       };
     }
+    manifest.modules[m.name] = mod;
   }
 
   return manifest;

@@ -1,8 +1,8 @@
 import React from "react";
 import axios from "axios";
-import FormGenerator from "./FormGenerator";
+import FormGenerator from "../components/FormGenerator";
 import { useHistory } from "react-router-dom";
-import useManifest from "./utils/useManifest";
+import useManifest from "../utils/useManifest";
 
 interface CreatePageProps {
   moduleName: string;

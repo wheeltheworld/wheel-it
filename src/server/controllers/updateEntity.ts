@@ -1,6 +1,6 @@
 import type { RequestHandler } from "express";
-import type { CrudModel } from "./genCrud";
-import { getFields } from "./getFields";
+import type { CrudModel } from "../genCrud";
+import { getFields } from "../utils/getFields";
 
 export const updateEntity =
   (model: typeof CrudModel, key: string): RequestHandler =>
