@@ -6,6 +6,7 @@ import callsite from "callsite";
 import { dirname, join } from "path";
 import { genCrudModule } from "./genModuleCrud";
 import { genManifest } from "./genManifest";
+import type { Field } from "../shared/manifest";
 
 type PromiseOrNot<T> = T | Promise<T>;
 
@@ -16,13 +17,10 @@ export interface GenCrudSettings {
 
 export interface Wheel {
   isOkay: boolean;
-  editables: string[];
-  getables: string[];
-  sortables: string[];
-  hiddens: string[];
+  fields: Field[];
 }
 export declare class CrudModel extends BaseEntity {
-  wheel: Wheel;
+  static wheel: Wheel;
   hideHiddens(): void;
   beforeCreate?(): PromiseOrNot<void>;
   afterCreate?(): PromiseOrNot<void>;
@@ -79,11 +77,7 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
           if (file.name.match(/\.[jt]s$/)) {
             const exported = require(`${moduleDir}/${dir.name}/${file.name}`);
             for (const model of Object.values(exported) as typeof CrudModel[]) {
-              if (
-                model &&
-                model instanceof Function &&
-                model.prototype.wheel?.isOkay
-              ) {
+              if (model && model instanceof Function && model.wheel?.isOkay) {
                 modules[name].models.push(model as typeof CrudModel);
               }
             }

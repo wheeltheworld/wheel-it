@@ -1,9 +1,9 @@
 import React, { ReactElement, ReactNode } from "react";
 import { Route } from "react-router-dom";
-import { useWheel } from "../components/WheelProvider";
-import CreatePage from "../pages/CreatePage";
-import EditPage from "../pages/EditPage";
-import ListPage from "../pages/ListPage";
+import { useWheel } from "../../../client/components/WheelProvider";
+import CreatePage from "../../../client/pages/CreatePage";
+import EditPage from "../../../client/pages/EditPage";
+import ListPage from "../../../client/pages/ListPage";
 import useManifest from "./useManifest";
 
 export const useRoutes = (): ReactNode[] => {
@@ -41,17 +41,17 @@ export const useRoutes = (): ReactNode[] => {
         />
       );
       routes.push(createRoute, listRoute);
-      for (const getable of model.getables) {
+      for (const indexable of model.indexables) {
         const editRoute = (
           <Route
-            path={`/_/${m.name}/${model.name}/${getable}/:value`}
+            path={`/_/${m.name}/${model.name}/${indexable}/:value`}
             exact
             component={() =>
               wrap(
                 <EditPage
                   modelName={model.name}
                   moduleName={m.name}
-                  by={getable}
+                  by={indexable}
                 />
               )
             }

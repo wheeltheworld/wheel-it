@@ -4,7 +4,7 @@ import type {
   Manifest,
   ManifestModel,
   ManifestModule,
-} from "src/shared/manifest";
+} from "../../../shared/manifest";
 import { useAsyncEffect } from "./useAsyncEffect";
 
 declare global {

@@ -32,7 +32,6 @@
     "pretty": true,
     "downlevelIteration": true,
     "importHelpers": true,
-    "baseUrl": "./",
     "incremental": false
   },
   "exclude": ["node_modules"],

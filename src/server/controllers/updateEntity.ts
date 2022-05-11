@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
 import type { CrudModel } from "../genCrud";
-import { getFields } from "../utils/getFields";
+import { isNullOrUndefined } from "../utils/isNullOrUndefined";
+import { isTypeCorrect } from "../utils/isTypeCorrect";
 
 export const updateEntity =
   (model: typeof CrudModel, key: string): RequestHandler =>
@@ -13,18 +14,15 @@ export const updateEntity =
         .status(404)
         .send(`${model.name} with ${key}: '${req.params.value}' not found`);
     }
-    const fields = getFields(model);
+    const fields = model.wheel.fields;
     for (const field of fields) {
-      if (!field.editable) continue;
-      if (
-        req.body[field.name] !== undefined &&
-        typeof req.body[field.name] !== field.type
-      ) {
+      if (field.isReadonly) continue;
+      if (isNullOrUndefined(req.body[field.name])) continue;
+      if (isTypeCorrect(req.body[field.name], field)) {
         res
           .status(400)
           .send(`invalid field ${field.name}, expected type ${field.type}`);
       }
-      if (req.body === undefined) continue;
 
       entity[field.name as keyof CrudModel] = req.body[field.name];
     }

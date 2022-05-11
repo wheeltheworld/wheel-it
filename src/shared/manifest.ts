@@ -1,16 +1,20 @@
 export interface Field {
   label: string;
   name: string;
-  type: string;
-  required: boolean;
-  editable: boolean;
+  type: FieldType;
+  isRequired: boolean;
+  isReadonly: boolean;
+  isHidden: boolean;
+  indexable: boolean;
 }
+
+export type FieldType = "string" | "int" | "float" | "boolean" | "date";
 
 export interface ManifestModel {
   name: string;
   icon?: string;
-  getables: string[];
   fields: Field[];
+  indexables: string[];
 }
 
 export interface ManifestModule {

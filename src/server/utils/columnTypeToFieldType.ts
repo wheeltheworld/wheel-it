@@ -1,17 +1,20 @@
-import { Field } from "../../shared/fields";
 import type { ColumnType } from "typeorm";
+import type { FieldType } from "../../shared/manifest";
 
-export const columnTypeToFieldType = (columnType: ColumnType): string => {
-  const columnTypeToFieldTypeMap: Partial<Record<string, Field>> = {
-    int: Field.INT,
-    bigint: Field.INT,
-    decimal: Field.FLOAT,
-    float: Field.FLOAT,
-    double: Field.FLOAT,
-    varchar: Field.STRING,
-    text: Field.STRING,
-    bool: Field.BOOLEAN,
-    tinyint: Field.BOOLEAN,
+export const columnTypeToFieldType = (
+  columnType: ColumnType | undefined
+): FieldType => {
+  if (!columnType) return "string";
+  const columnTypeToFieldTypeMap: Partial<Record<string, FieldType>> = {
+    int: "int",
+    bigint: "int",
+    decimal: "float",
+    float: "float",
+    double: "float",
+    varchar: "string",
+    text: "string",
+    bool: "boolean",
+    tinyint: "boolean",
   };
-  return columnTypeToFieldTypeMap[columnType.toString()] || Field.STRING;
+  return columnTypeToFieldTypeMap[columnType.toString()] || "string";
 };

@@ -1,7 +1,7 @@
 import React, { FormEventHandler, useEffect, useState } from "react";
 import { Box, Button, FormControl, FormLabel } from "@chakra-ui/react";
 import DataField from "./DataField";
-import type { Field } from "src/shared/manifest";
+import type { Field } from "../../shared/manifest";
 
 interface FormGeneratorProps {
   initValues?: any;

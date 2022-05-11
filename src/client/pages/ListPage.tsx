@@ -7,13 +7,14 @@ import {
   Tr,
   Button,
   Flex,
+  Link,
 } from "@chakra-ui/react";
 import React from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import Paginator from "../components/Paginator";
-import { useEntities } from "../utils/useEntities";
-import useManifest from "../utils/useManifest";
-import { useQuery } from "../utils/useQuery";
+import { useEntities } from "../utils/hooks/useEntities";
+import useManifest from "../utils/hooks/useManifest";
+import { useQuery } from "../utils/hooks/useQuery";
 
 interface ListPageProps {
   moduleName: string;
@@ -61,7 +62,15 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
           {items?.map((item, i) => (
             <Tr key={i}>
               {manifest?.fields.map((field) => (
-                <Td key={field.name}>{item[field.name]?.toString()}</Td>
+                <Td key={field.name}>
+                  {manifest.indexables.includes(field.name) ? (
+                    <Link as={RouterLink} to={``}>
+                      {item[field.name]?.toString()}
+                    </Link>
+                  ) : (
+                    item[field.name]?.toString()
+                  )}
+                </Td>
               ))}
             </Tr>
           ))}
