@@ -3,22 +3,15 @@ import useManifest from "./useManifest";
 interface NavLink {
   label: string;
   icon?: string;
-  path: string;
+  path?: string;
+  children?: NavLink[];
 }
 
-interface NavLinks {
-  [key: string]: {
-    label: string;
-    icon?: string;
-    children: NavLink[];
-  };
-}
-
-export const useNav = (): NavLinks => {
+export const useNav = (): NavLink[] => {
   const { manifest } = useManifest();
 
-  if (!manifest) return {};
-  const nav: NavLinks = {};
+  if (!manifest) return [];
+  const nav: NavLink[] = [];
 
   for (const mod of Object.values(manifest.modules)) {
     const moduleName = mod.name;
@@ -29,11 +22,11 @@ export const useNav = (): NavLinks => {
         path: `/_/${moduleName}/${model.name}`,
       });
     }
-    nav[moduleName] = {
+    nav.push({
       label: moduleName,
       icon: mod.icon,
       children: moduleLinks,
-    };
+    });
   }
 
   return nav;

@@ -1,5 +1,5 @@
 import React, { FormEventHandler, useEffect, useState } from "react";
-import { Box, FormControl, FormLabel } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel } from "@chakra-ui/react";
 import DataField from "./DataField";
 import type { Field } from "src/shared/manifest";
 
@@ -42,6 +42,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
           />
         </FormControl>
       ))}
+      <Button type="submit">Save</Button>
     </Box>
   );
 };

@@ -10,7 +10,12 @@ interface UseEntity {
   value?: string;
 }
 
-export const useEntity = ({ moduleName, modelName, by, value }: UseEntity) => {
+export const useEntity = ({
+  moduleName,
+  modelName,
+  by,
+  value,
+}: UseEntity): any => {
   const [entity, setEntity] = useState<any>();
   const { manifest, endpoint } = useManifest();
 

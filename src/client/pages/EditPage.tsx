@@ -19,20 +19,21 @@ const EditPage: React.FC<EditPageProps> = ({
   by,
   redirectOnDelete,
 }) => {
-  const { entity } = useEntity({
+  const { value } = useParams<{ value: string }>();
+  const entity = useEntity({
     moduleName,
     modelName,
     by,
+    value,
   });
   const { push } = useHistory();
-  const { manifest, endpoint } = useManifest();
-  const { value } = useParams<{ value: string }>();
+  const { manifest, endpoint, get } = useManifest();
 
   if (!manifest) {
     return null;
   }
 
-  const fields = manifest.modules[moduleName].models[modelName].fields;
+  const fields = get({ moduleName, modelName }).fields;
 
   const handleSubmit = async (data: any) => {
     await axios.patch(

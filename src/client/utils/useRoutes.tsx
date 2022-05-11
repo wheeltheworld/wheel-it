@@ -25,6 +25,7 @@ export const useRoutes = (): ReactNode[] => {
       const createRoute = (
         <Route
           path={`/_/${m.name}/${model.name}/create`}
+          exact
           component={() =>
             wrap(<CreatePage modelName={model.name} moduleName={m.name} />)
           }
@@ -33,6 +34,7 @@ export const useRoutes = (): ReactNode[] => {
       const listRoute = (
         <Route
           path={`/_/${m.name}/${model.name}`}
+          exact
           component={() =>
             wrap(<ListPage modelName={model.name} moduleName={m.name} />)
           }
@@ -43,6 +45,7 @@ export const useRoutes = (): ReactNode[] => {
         const editRoute = (
           <Route
             path={`/_/${m.name}/${model.name}/${getable}/:value`}
+            exact
             component={() =>
               wrap(
                 <EditPage
