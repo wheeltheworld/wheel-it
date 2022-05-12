@@ -15,11 +15,6 @@ const bundle = ({ name, path }) => ({
   output: [
     {
       file: `./${buildDir}/${name}.js`,
-      format: "esm",
-      sourcemap: true,
-    },
-    {
-      file: `./${buildDir}/${name}.cjs.js`,
       format: "cjs",
       sourcemap: true,
     },
