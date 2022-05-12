@@ -19,6 +19,7 @@ export const useNav = (): NavLink[] => {
     for (const model of Object.values(mod.models)) {
       moduleLinks.push({
         label: model.name,
+        icon: model.icon,
         path: `/_/${moduleName}/${model.name}`,
       });
     }

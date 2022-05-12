@@ -49,6 +49,12 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
         <Button as={RouterLink} to={`/_/${moduleName}/${modelName}/create`}>
           Create {modelName}
         </Button>
+        <Input
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
+          value={search}
+        />
         <Paginator
           page={page}
           pages={pages || 1}
@@ -56,12 +62,6 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
             setAmount(amount);
             setPage(number);
           }}
-        />
-        <Input
-          onChange={(e) => {
-            setSearch(e.target.value);
-          }}
-          value={search}
         />
       </Flex>
       <Table>

@@ -10,14 +10,21 @@ import type { Field } from "../shared/manifest";
 
 type PromiseOrNot<T> = T | Promise<T>;
 
+interface ModuleDeclaration {
+  src: string;
+  icon: string;
+  name?: string;
+}
+
 export interface GenCrudSettings {
-  modules: string[];
+  modules: ModuleDeclaration[];
   modelsDir: string | RegExp;
 }
 
 export interface Wheel {
   isOkay: boolean;
   fields: Field[];
+  icon?: string;
 }
 export declare class CrudModel extends BaseEntity {
   static wheel: Wheel;
@@ -31,6 +38,7 @@ export declare class CrudModel extends BaseEntity {
 }
 export interface Module {
   name: string;
+  icon: string;
   models: typeof CrudModel[];
 }
 
@@ -52,30 +60,34 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
   // https://stackoverflow.com/questions/18144921/how-do-i-get-the-dirname-of-the-calling-method-when-it-is-in-a-different-file-in
   const root = dirname(callsite()[1].getFileName());
 
-  const moduleDirs = settings.modules.map((mod) => join(root, mod));
+  settings.modules = settings.modules.map((mod) => ({
+    ...mod,
+    src: join(root, mod.src),
+  }));
 
   const modules: Record<string, Module> = {};
 
-  for (const moduleDir of moduleDirs) {
-    const [name] = moduleDir.match(/[A-z]+$/) || [];
+  for (const mod of settings.modules) {
+    const name = mod.name || mod.src.match(/[A-z]+$/)?.[0];
     if (!name) {
-      console.warn(`invalid module dir: ${moduleDir}`);
+      console.warn(`invalid module dir: ${mod.src}`);
       continue;
     }
     modules[name] = {
       name,
+      icon: mod.icon,
       models: [],
     };
-    const dirs = readdirSync(`${moduleDir}`, {
+    const dirs = readdirSync(`${mod.src}`, {
       withFileTypes: true,
     }).filter((dir) => dir.isDirectory());
     for (const dir of dirs) {
       if (isModelsDirectory(dir, settings)) {
-        for (const file of readdirSync(`${moduleDir}/${dir.name}`, {
+        for (const file of readdirSync(`${mod.src}/${dir.name}`, {
           withFileTypes: true,
         }).filter((file) => file.isFile())) {
           if (file.name.match(/\.[jt]s$/)) {
-            const exported = require(`${moduleDir}/${dir.name}/${file.name}`);
+            const exported = require(`${mod.src}/${dir.name}/${file.name}`);
             for (const model of Object.values(exported) as typeof CrudModel[]) {
               if (model && model instanceof Function && model.wheel?.isOkay) {
                 modules[name].models.push(model as typeof CrudModel);

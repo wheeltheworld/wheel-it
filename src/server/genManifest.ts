@@ -10,11 +10,13 @@ export const genManifest = (modules: Module[]): Manifest => {
   for (const m of modules) {
     const mod: ManifestModule = {
       name: m.name,
+      icon: m.icon,
       models: {},
     };
     for (const model of m.models) {
       mod.models[modelName(model)] = {
         name: modelName(model),
+        icon: model.wheel.icon,
         fields: {
           all: model.wheel.fields,
           indexables: model.wheel.fields.filter((f) => f.indexable),

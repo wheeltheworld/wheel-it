@@ -1,16 +1,23 @@
 import type { Field as IField } from "../shared/manifest";
+import type { Wheel } from "./genCrud";
 import { completeField } from "./utils/completeField";
 
+interface FormConfig {
+  icon?: string;
+}
+
 export const Form =
-  (): ClassDecorator =>
-  (ctr: Function & { wheel?: { isOkay: true; fields: IField[] } }) => {
+  (config?: FormConfig): ClassDecorator =>
+  (ctr: Function & { wheel?: Wheel }) => {
     ctr.wheel ??= {
       isOkay: true,
       fields: [],
+      icon: config?.icon,
     };
 
     ctr.wheel.isOkay ??= true;
     ctr.wheel.fields ??= [];
+    ctr.wheel.icon ??= config?.icon;
 
     ctr.prototype.hideHiddens = function () {
       const hiddens = this.constructor.wheel.fields
