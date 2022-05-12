@@ -49,7 +49,7 @@ export const useEntities = ({
     );
     setList(data);
     setLoading(false);
-  }, [page, sortBy, sortOrder, amount, moduleName, modelName]);
+  }, [page, sortBy, sortOrder, amount, moduleName, modelName, query]);
 
   return { ...list, loading };
 };

@@ -10,10 +10,9 @@ import {
   Link,
   Input,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import Paginator from "../components/Paginator";
-import { setQueryParam } from "../utils/funcs/setQueryParam";
 import { useEntities } from "../utils/hooks/useEntities";
 import useManifest from "../utils/hooks/useManifest";
 import { useQuery } from "../utils/hooks/useQuery";
@@ -26,8 +25,8 @@ interface ListPageProps {
 const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
   const manifest = useManifest().get({ moduleName, modelName });
   const query = useQuery();
-  const page = Number(query.get("page")) || 1;
-  const amount = Number(query.get("amount")) || 25;
+  const [page, setPage] = useState(Number(query.get("page")) || 1);
+  const [amount, setAmount] = useState(Number(query.get("amount")) || 25);
   const [search, setSearch] = useState(query.get("search") || "");
   const { items, pages } = useEntities({
     moduleName,
@@ -37,6 +36,12 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
     query: search,
   });
   const { push } = useHistory();
+
+  useEffect(() => {
+    push(
+      `/_/${moduleName}/${modelName}?page=${page}&amount=${amount}&search=${search}`
+    );
+  }, [page, amount, search]);
 
   return (
     <>
@@ -48,15 +53,13 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
           page={page}
           pages={pages || 1}
           onChange={({ number, amount }) => {
-            push(
-              `/_/${moduleName}/${modelName}?page=${number}&amount=${amount}`
-            );
+            setAmount(amount);
+            setPage(number);
           }}
         />
         <Input
           onChange={(e) => {
             setSearch(e.target.value);
-            setQueryParam("search", e.target.value);
           }}
           value={search}
         />

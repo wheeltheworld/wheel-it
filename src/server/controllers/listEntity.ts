@@ -14,20 +14,13 @@ export const listEntity =
         error: "Invalid query",
       });
     }
-    console.log(
-      req.query.query
-        ? manifest.fields.searchables.map((f) => ({
-            [f.name]: Like(`%${req.query.query}%`),
-          }))[0]
-        : undefined
-    );
     const [items, count] = await model.findAndCount({
       take: limit,
       skip: offset,
       where: req.query.query
         ? manifest.fields.searchables.map((f) => ({
             [f.name]: Like(`%${req.query.query}%`),
-          }))[0]
+          }))
         : undefined,
       order: req.query.sortBy
         ? {
