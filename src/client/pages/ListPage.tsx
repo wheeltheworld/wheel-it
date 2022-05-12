@@ -8,10 +8,12 @@ import {
   Button,
   Flex,
   Link,
+  Input,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import Paginator from "../components/Paginator";
+import { setQueryParam } from "../utils/funcs/setQueryParam";
 import { useEntities } from "../utils/hooks/useEntities";
 import useManifest from "../utils/hooks/useManifest";
 import { useQuery } from "../utils/hooks/useQuery";
@@ -26,11 +28,13 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
   const query = useQuery();
   const page = Number(query.get("page")) || 1;
   const amount = Number(query.get("amount")) || 25;
+  const [search, setSearch] = useState(query.get("search") || "");
   const { items, pages } = useEntities({
     moduleName,
     modelName,
     page: page - 1,
     amount,
+    query: search,
   });
   const { push } = useHistory();
 
@@ -49,11 +53,18 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
             );
           }}
         />
+        <Input
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setQueryParam("search", e.target.value);
+          }}
+          value={search}
+        />
       </Flex>
       <Table>
         <Thead>
           <Tr>
-            {manifest?.fields.map((field) => (
+            {manifest?.fields.listables.map((field) => (
               <Th key={field.name}>{field.label || field.name}</Th>
             ))}
           </Tr>
@@ -61,10 +72,17 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
         <Tbody>
           {items?.map((item, i) => (
             <Tr key={i}>
-              {manifest?.fields.map((field) => (
+              {manifest?.fields.listables.map((field) => (
                 <Td key={field.name}>
-                  {manifest.indexables.includes(field.name) ? (
-                    <Link as={RouterLink} to={``}>
+                  {manifest.fields.indexables
+                    .map((f) => f.name)
+                    .includes(field.name) ? (
+                    <Link
+                      as={RouterLink}
+                      to={`/_/${moduleName}/${modelName}/${field.name}/${
+                        item[field.name]
+                      }`}
+                    >
                       {item[field.name]?.toString()}
                     </Link>
                   ) : (

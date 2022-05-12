@@ -1,5 +1,5 @@
 import type { Field as IField } from "../shared/manifest";
-import { completeField } from "./utils/getField";
+import { completeField } from "./utils/completeField";
 
 export const Form =
   (): ClassDecorator =>

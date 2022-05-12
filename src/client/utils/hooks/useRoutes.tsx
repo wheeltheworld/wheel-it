@@ -41,17 +41,17 @@ export const useRoutes = (): ReactNode[] => {
         />
       );
       routes.push(createRoute, listRoute);
-      for (const indexable of model.indexables) {
+      for (const indexable of model.fields.indexables) {
         const editRoute = (
           <Route
-            path={`/_/${m.name}/${model.name}/${indexable}/:value`}
+            path={`/_/${m.name}/${model.name}/${indexable.name}/:value`}
             exact
             component={() =>
               wrap(
                 <EditPage
                   modelName={model.name}
                   moduleName={m.name}
-                  by={indexable}
+                  by={indexable.name}
                 />
               )
             }

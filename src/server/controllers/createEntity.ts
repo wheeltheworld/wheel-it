@@ -1,14 +1,14 @@
 import type { RequestHandler } from "express";
+import type { ManifestModel } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
 import { isNullOrUndefined } from "../utils/isNullOrUndefined";
 import { isTypeCorrect } from "../utils/isTypeCorrect";
 
 export const createEntity =
-  (model: typeof CrudModel): RequestHandler =>
+  (model: typeof CrudModel, manifest: ManifestModel): RequestHandler =>
   async (req, res) => {
-    const { fields } = model.wheel;
     const entity = model.create();
-    for (const field of fields) {
+    for (const field of manifest.fields.all) {
       if (field.isReadonly) continue;
       const value = req.body[field.name];
       if (isNullOrUndefined(value) && field.isRequired) {

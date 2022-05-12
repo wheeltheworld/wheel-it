@@ -66,7 +66,7 @@ const EditPage: React.FC<EditPageProps> = ({
         Delete
       </Button>
       <FormGenerator
-        fields={fields}
+        fields={fields.all}
         onSubmit={handleSubmit}
         initValues={entity}
       />

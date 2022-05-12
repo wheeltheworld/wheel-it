@@ -1,6 +1,7 @@
 import React from "react";
 import { Input, Switch } from "@chakra-ui/react";
 import type { FieldType } from "../../shared/manifest";
+import { useWheel } from "./WheelProvider";
 
 interface DataFieldProps {
   onChange: (value: any) => void;
@@ -9,9 +10,12 @@ interface DataFieldProps {
 }
 
 const DataField: React.FC<DataFieldProps> = ({ onChange, value, type }) => {
+  const { customInputs } = useWheel();
+  const CustomInput = customInputs?.[type];
+  if (CustomInput) {
+    return <CustomInput onChange={onChange} value={value} />;
+  }
   switch (type) {
-    case "string":
-      return <Input onChange={(e) => onChange(e.target.value)} value={value} />;
     case "int":
       return (
         <Input
@@ -34,8 +38,10 @@ const DataField: React.FC<DataFieldProps> = ({ onChange, value, type }) => {
       return (
         <Switch onChange={(e) => onChange(e.target.checked)} value={value} />
       );
+    case "string":
+    default:
+      return <Input onChange={(e) => onChange(e.target.value)} value={value} />;
   }
-  return <></>;
 };
 
 export default DataField;

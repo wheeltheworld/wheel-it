@@ -1,7 +1,11 @@
 import React, { createContext, PropsWithChildren, useContext } from "react";
+import type { CustomInput } from "../utils/types/CustomInput";
+import type { IconResolver } from "../utils/types/IconResolver";
 
 interface WheelCTX {
   pageWrapper?: React.ComponentType<PropsWithChildren<{}>>;
+  iconResolver?: IconResolver;
+  customInputs?: Record<string, CustomInput>;
 }
 
 const wheelCTX = createContext<WheelCTX>({});

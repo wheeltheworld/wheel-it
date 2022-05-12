@@ -37,7 +37,7 @@ const CreatePage: React.FC<CreatePageProps> = ({
     }
   };
 
-  return <FormGenerator fields={fields} onSubmit={handleSubmit} />;
+  return <FormGenerator fields={fields.all} onSubmit={handleSubmit} />;
 };
 
 export default CreatePage;

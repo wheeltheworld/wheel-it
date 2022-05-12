@@ -8,12 +8,15 @@ export const completeField = (
   model: typeof CrudModel
 ) => {
   try {
-    const columns = model.getRepository().metadata.columns;
     field.isHidden ??= false;
     field.isReadonly ??= false;
+    field.isListable ??= true;
     field.isRequired ??= false;
+    field.isSearchable ??= false;
+    field.indexable ??= false;
     field.label ??= propName;
     field.name ??= propName;
+    const columns = model.getRepository().metadata.columns;
     field.type ??= columnTypeToFieldType(
       columns.find((c) => c.propertyName === propName)?.type
     );

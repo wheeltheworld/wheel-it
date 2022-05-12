@@ -10,6 +10,7 @@ interface UseEntities {
   sortOrder?: "ASC" | "DESC";
   amount?: number;
   page?: number;
+  query?: string;
 }
 
 interface List {
@@ -27,6 +28,7 @@ export const useEntities = ({
   modelName,
   amount = 25,
   page = 0,
+  query,
 }: UseEntities) => {
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +41,9 @@ export const useEntities = ({
       `${endpoint({
         moduleName,
         modelName,
-      })}?${sortBy ? `sortBy=${sortBy}&` : ""}${
+      })}?${query ? `query=${query}&` : ""}${
+        sortBy ? `sortBy=${sortBy}&` : ""
+      }${
         sortOrder ? `sortOrder=${sortOrder}&` : ""
       }limit=${amount}&page=${page}`
     );

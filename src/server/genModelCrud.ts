@@ -13,12 +13,18 @@ export const genModelCrud = (
 ): RequestHandler => {
   const router = Router();
 
-  router.get("/", listEntity(model));
-  router.post("/", createEntity(model));
-  for (const indexable of manifest.indexables) {
-    router.get(`/${indexable}/:value`, getEntity(model, indexable));
-    router.patch(`/${indexable}/:value`, updateEntity(model, indexable));
-    router.delete(`/${indexable}/:value`, deleteEntity(model, indexable));
+  router.get("/", listEntity(model, manifest));
+  router.post("/", createEntity(model, manifest));
+  for (const indexable of manifest.fields.indexables) {
+    router.get(`/${indexable.name}/:value`, getEntity(model, indexable.name));
+    router.patch(
+      `/${indexable.name}/:value`,
+      updateEntity(model, indexable.name)
+    );
+    router.delete(
+      `/${indexable.name}/:value`,
+      deleteEntity(model, indexable.name)
+    );
   }
 
   return Router().use(`/${manifest.name}`, router);

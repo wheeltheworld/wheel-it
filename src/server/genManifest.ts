@@ -15,10 +15,14 @@ export const genManifest = (modules: Module[]): Manifest => {
     for (const model of m.models) {
       mod.models[modelName(model)] = {
         name: modelName(model),
-        fields: model.wheel.fields,
-        indexables: model.wheel.fields
-          .filter((f) => f.indexable)
-          .map((f) => f.name),
+        fields: {
+          all: model.wheel.fields,
+          indexables: model.wheel.fields.filter((f) => f.indexable),
+          listables: model.wheel.fields.filter(
+            (f) => f.isListable && !f.isHidden
+          ),
+          searchables: model.wheel.fields.filter((f) => f.isSearchable),
+        },
       };
     }
     manifest.modules[m.name] = mod;
