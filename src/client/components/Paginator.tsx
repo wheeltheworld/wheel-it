@@ -55,6 +55,7 @@ const Paginator: React.FC<PaginatorProps> = ({
         )
       )}
       <Select
+        width="unset"
         flexShrink={0}
         onChange={(e) => {
           setAmount(Number(e.target.value));

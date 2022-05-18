@@ -45,7 +45,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
 
   return (
     <>
-      <Flex>
+      <Flex justify="space-between">
         <Button as={RouterLink} to={`/_/${moduleName}/${modelName}/create`}>
           Create {modelName}
         </Button>
@@ -54,6 +54,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
             setSearch(e.target.value);
           }}
           value={search}
+          maxW="300px"
         />
         <Paginator
           page={page}
@@ -64,7 +65,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
           }}
         />
       </Flex>
-      <Table>
+      <Table mt="20px">
         <Thead>
           <Tr>
             {manifest?.fields.listables.map((field) => (
@@ -75,24 +76,31 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
         <Tbody>
           {items?.map((item, i) => (
             <Tr key={i}>
-              {manifest?.fields.listables.map((field) => (
-                <Td key={field.name}>
-                  {manifest.fields.indexables
-                    .map((f) => f.name)
-                    .includes(field.name) ? (
-                    <Link
-                      as={RouterLink}
-                      to={`/_/${moduleName}/${modelName}/${field.name}/${
-                        item[field.name]
-                      }`}
-                    >
-                      {item[field.name]?.toString()}
-                    </Link>
-                  ) : (
-                    item[field.name]?.toString()
-                  )}
-                </Td>
-              ))}
+              {manifest?.fields.listables.map((field) => {
+                let value = item[field.name];
+                if (field.type === "date") {
+                  value = new Date(value).toLocaleDateString();
+                }
+                value = value?.toString();
+                return (
+                  <Td key={field.name}>
+                    {manifest.fields.indexables
+                      .map((f) => f.name)
+                      .includes(field.name) ? (
+                      <Link
+                        as={RouterLink}
+                        to={`/_/${moduleName}/${modelName}/${field.name}/${
+                          item[field.name]
+                        }`}
+                      >
+                        {value}
+                      </Link>
+                    ) : (
+                      value
+                    )}
+                  </Td>
+                );
+              })}
             </Tr>
           ))}
         </Tbody>

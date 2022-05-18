@@ -3,41 +3,50 @@ import axios from "axios";
 import FormGenerator from "../components/FormGenerator";
 import { useHistory } from "react-router-dom";
 import useManifest from "../utils/hooks/useManifest";
+import { Button } from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
 
 interface CreatePageProps {
   moduleName: string;
   modelName: string;
-  redirectOnCreate?: (id: number) => string;
 }
 
-const CreatePage: React.FC<CreatePageProps> = ({
-  moduleName,
-  modelName,
-  redirectOnCreate,
-}) => {
-  const { endpoint, manifest } = useManifest();
+const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
+  const { endpoint, manifest, get } = useManifest();
   const { push } = useHistory();
 
   if (!manifest) {
     return null;
   }
 
-  const fields = manifest.modules[moduleName].models[modelName].fields;
+  const fields = get({ moduleName, modelName }).fields;
 
   const handleSubmit = async (data: any) => {
-    const { data: res } = await axios.post(
+    const { data: ent } = await axios.post(
       endpoint({
         modelName,
         moduleName,
       }),
       data
     );
-    if (redirectOnCreate) {
-      push(redirectOnCreate(res.id));
+    const indexable = fields.indexables[0]?.name;
+
+    if (indexable) {
+      push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
     }
   };
 
-  return <FormGenerator fields={fields.all} onSubmit={handleSubmit} />;
+  return (
+    <>
+      <Button as={RouterLink} to={`/_/${moduleName}/${modelName}`}>
+        Go Back
+      </Button>
+      <FormGenerator
+        fields={fields.all.filter((f) => !f.isReadonly)}
+        onSubmit={handleSubmit}
+      />
+    </>
+  );
 };
 
 export default CreatePage;

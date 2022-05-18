@@ -18,8 +18,8 @@ export const updateEntity =
     for (const field of fields) {
       if (field.isReadonly) continue;
       if (isNullOrUndefined(req.body[field.name])) continue;
-      if (isTypeCorrect(req.body[field.name], field)) {
-        res
+      if (!isTypeCorrect(req.body[field.name], field)) {
+        return res
           .status(400)
           .send(`invalid field ${field.name}, expected type ${field.type}`);
       }

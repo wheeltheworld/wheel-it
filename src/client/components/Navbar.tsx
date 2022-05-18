@@ -7,14 +7,15 @@ interface NavbarProps {}
 
 const Navbar: React.FC<NavbarProps> = ({}) => {
   const items = useNav();
+  console.log({ items });
   return (
-    <Box>
+    <Box p="50px" borderBottom="1px solid lightgray" mb="30px" mx="50px">
       {items.map((item) =>
         item.children ? (
           <Box key={item.path}>
-            {items.map((item) => (
-              <Link as={RouterLink} to={item.path || "/"}>
-                {item.label}
+            {item.children.map((child) => (
+              <Link as={RouterLink} to={child.path || "/"}>
+                {child.label}
               </Link>
             ))}
           </Box>

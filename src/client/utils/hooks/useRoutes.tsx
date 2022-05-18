@@ -6,7 +6,13 @@ import EditPage from "../../../client/pages/EditPage";
 import ListPage from "../../../client/pages/ListPage";
 import useManifest from "./useManifest";
 
-export const useRoutes = (): ReactNode[] => {
+interface UseRoutes {
+  withNotFound?: boolean;
+}
+
+export const useRoutes = (
+  { withNotFound = false }: UseRoutes = { withNotFound: false }
+): ReactNode[] => {
   const { manifest } = useManifest();
   const { pageWrapper: PageWrapper } = useWheel();
   const routes: ReactNode[] = [];
@@ -63,6 +69,21 @@ export const useRoutes = (): ReactNode[] => {
         routes.push(editRoute);
       }
     }
+  }
+
+  if (withNotFound) {
+    routes.push(
+      <Route
+        key="not-found"
+        component={() =>
+          wrap(
+            <div>
+              <h1>Not Found</h1>
+            </div>
+          )
+        }
+      />
+    );
   }
 
   return routes;

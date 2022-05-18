@@ -36,6 +36,6 @@ export const Field =
     if (typeof propertyKey !== "string") return;
     target.constructor.wheel ??= {};
     target.constructor.wheel.fields ??= [];
-    completeField(f, propertyKey, target.constructor);
+    completeField(f, propertyKey);
     target.constructor.wheel.fields.push(f);
   };

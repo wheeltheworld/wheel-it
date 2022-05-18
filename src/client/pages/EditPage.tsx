@@ -5,20 +5,15 @@ import { useHistory, useParams } from "react-router-dom";
 import FormGenerator from "../components/FormGenerator";
 import { useEntity } from "../utils/hooks/useEntity";
 import useManifest from "../utils/hooks/useManifest";
+import { Link as RouterLink } from "react-router-dom";
 
 interface EditPageProps {
   moduleName: string;
   modelName: string;
   by: string;
-  redirectOnDelete?: string;
 }
 
-const EditPage: React.FC<EditPageProps> = ({
-  moduleName,
-  modelName,
-  by,
-  redirectOnDelete,
-}) => {
+const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
   const { value } = useParams<{ value: string }>();
   const entity = useEntity({
     moduleName,
@@ -36,14 +31,21 @@ const EditPage: React.FC<EditPageProps> = ({
   const fields = get({ moduleName, modelName }).fields;
 
   const handleSubmit = async (data: any) => {
-    await axios.patch(
+    const { data: ent } = await axios.patch(
       endpoint({
         modelName,
         moduleName,
         by,
+        value,
       }),
       data
     );
+
+    const indexable = fields.indexables[0]?.name;
+
+    if (indexable) {
+      push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
+    }
   };
 
   const handleDelete = async () => {
@@ -55,13 +57,18 @@ const EditPage: React.FC<EditPageProps> = ({
         value,
       })
     );
-    if (redirectOnDelete) {
-      push(redirectOnDelete);
-    }
+    push(`/_/${moduleName}/${modelName}`);
   };
+
+  if (!entity) {
+    return null;
+  }
 
   return (
     <>
+      <Button as={RouterLink} to={`/_/${moduleName}/${modelName}`}>
+        Go Back
+      </Button>
       <Button colorScheme="red" onClick={handleDelete}>
         Delete
       </Button>

@@ -1,3 +1,4 @@
+import { Box } from "@chakra-ui/react";
 import React, { PropsWithChildren } from "react";
 import Navbar from "./Navbar";
 
@@ -7,7 +8,7 @@ const Layout: React.FC<PropsWithChildren<LayoutProps>> = ({ children }) => {
   return (
     <>
       <Navbar />
-      {children}
+      <Box p="50px">{children}</Box>
     </>
   );
 };

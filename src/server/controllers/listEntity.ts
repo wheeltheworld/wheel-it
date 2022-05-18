@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import { Like } from "typeorm";
+import { FindConditions, Like } from "typeorm";
 import type { ManifestModel } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
 
@@ -18,9 +18,24 @@ export const listEntity =
       take: limit,
       skip: offset,
       where: req.query.query
-        ? manifest.fields.searchables.map((f) => ({
-            [f.name]: Like(`%${req.query.query}%`),
-          }))
+        ? (manifest.fields.searchables
+            .map((f) => {
+              if (f.type === "string") {
+                return {
+                  [f.name]: Like(`%${req.query.query}%`),
+                };
+              }
+              if (
+                (f.type === "int" || f.type === "float") &&
+                isNaN(Number(req.query.query))
+              ) {
+                return undefined;
+              }
+              return {
+                [f.name]: req.query.query,
+              };
+            })
+            .filter(Boolean) as FindConditions<CrudModel>)
         : undefined,
       order: req.query.sortBy
         ? {

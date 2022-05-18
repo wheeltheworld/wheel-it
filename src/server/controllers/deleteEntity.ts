@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import { getRepository } from "typeorm";
 import type { CrudModel } from "../genCrud";
 
 export const deleteEntity =
@@ -14,7 +15,11 @@ export const deleteEntity =
     }
 
     await entity.beforeDelete?.();
-    await entity.softRemove();
+    if (getRepository(model).metadata.deleteDateColumn) {
+      await entity.softRemove();
+    } else {
+      entity.remove();
+    }
     await entity.afterDelete?.();
 
     return res.json(true);
