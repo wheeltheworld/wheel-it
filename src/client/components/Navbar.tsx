@@ -1,4 +1,4 @@
-import { Box, Link } from "@chakra-ui/react";
+import { Box, Heading, Link } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import React from "react";
 import { useNav } from "../utils/hooks/useNav";
@@ -12,12 +12,15 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
     <Box p="50px" borderBottom="1px solid lightgray" mb="30px" mx="50px">
       {items.map((item) =>
         item.children ? (
-          <Box key={item.path}>
-            {item.children.map((child) => (
-              <Link as={RouterLink} to={child.path || "/"}>
-                {child.label}
-              </Link>
-            ))}
+          <Box>
+            <Heading>{item.label}</Heading>
+            <Box key={item.path}>
+              {item.children.map((child) => (
+                <Link as={RouterLink} to={child.path || "/"} mx="10px">
+                  {child.label}
+                </Link>
+              ))}
+            </Box>
           </Box>
         ) : (
           <Link as={RouterLink} to={item.path || "/"}>

@@ -1,10 +1,18 @@
 import type { RequestHandler } from "express";
+import type { ManifestModel } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
+import type { CTX } from "../utils/ctx";
+import { parseField } from "../utils/parseData";
 import { isNullOrUndefined } from "../utils/isNullOrUndefined";
 import { isTypeCorrect } from "../utils/isTypeCorrect";
 
 export const updateEntity =
-  (model: typeof CrudModel, key: string): RequestHandler =>
+  (
+    model: typeof CrudModel,
+    manifest: ManifestModel,
+    key: string,
+    ctx: CTX
+  ): RequestHandler =>
   async (req, res) => {
     const entity = await model.findOne({
       where: { [key]: req.params.value },
@@ -14,17 +22,20 @@ export const updateEntity =
         .status(404)
         .send(`${model.name} with ${key}: '${req.params.value}' not found`);
     }
-    const fields = model.wheel.fields;
-    for (const field of fields) {
+    const data = req.body;
+    for (const field of manifest.fields.all) {
       if (field.isReadonly) continue;
-      if (isNullOrUndefined(req.body[field.name])) continue;
-      if (!isTypeCorrect(req.body[field.name], field)) {
+      let value = data[field.name];
+      if (isNullOrUndefined(value)) continue;
+      if (!isTypeCorrect(value, field)) {
         return res
           .status(400)
           .send(`invalid field ${field.name}, expected type ${field.type}`);
       }
 
-      entity[field.name as keyof CrudModel] = req.body[field.name];
+      value = parseField(field, value, ctx.parsers);
+
+      entity[field.name as keyof CrudModel] = value;
     }
 
     await entity.beforeUpdate?.();

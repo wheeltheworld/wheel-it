@@ -2,9 +2,15 @@ import type { RequestHandler } from "express";
 import { FindConditions, Like } from "typeorm";
 import type { ManifestModel } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
+import type { CTX } from "../utils/ctx";
+import { unparseData } from "../utils/parseData";
 
 export const listEntity =
-  (model: typeof CrudModel, manifest: ManifestModel): RequestHandler =>
+  (
+    model: typeof CrudModel,
+    manifest: ManifestModel,
+    ctx: CTX
+  ): RequestHandler =>
   async (req, res) => {
     const limit = Math.min(Number(req.query.limit) || 25, 100);
     const offset = Number(req.query.page) * limit || 0;
@@ -14,7 +20,7 @@ export const listEntity =
         error: "Invalid query",
       });
     }
-    const [items, count] = await model.findAndCount({
+    let [items, count] = await model.findAndCount({
       take: limit,
       skip: offset,
       where: req.query.query
@@ -43,7 +49,10 @@ export const listEntity =
           }
         : undefined,
     });
-    items.map((item) => item.hideHiddens());
+    items = items.map((item) => {
+      item.hideHiddens();
+      return unparseData(item, manifest.fields.all, ctx.unparsers);
+    });
     return res.json({
       items,
       pages: Math.ceil(count / limit),

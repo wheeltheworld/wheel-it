@@ -1,3 +1,8 @@
+export interface Option {
+  value: string;
+  label: string;
+}
+
 export interface Field {
   /**
    * Label for the field
@@ -46,9 +51,26 @@ export interface Field {
    * @default {false}
    */
   indexable: boolean;
+
+  /**
+   * The default value for the field
+   */
+  default: any;
+
+  /**
+   * options for the field
+   */
+  options: Option[];
 }
 
-export type FieldType = "string" | "int" | "float" | "boolean" | "date";
+export type FieldType =
+  | "string"
+  | "int"
+  | "float"
+  | "boolean"
+  | "date"
+  | "select"
+  | "multiselect";
 
 export interface ManifestModel {
   name: string;

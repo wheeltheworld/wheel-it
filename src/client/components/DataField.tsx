@@ -3,6 +3,8 @@ import { Input, Switch } from "@chakra-ui/react";
 import type { Field } from "../../shared/manifest";
 import { useWheel } from "./WheelProvider";
 import Date from "./fields/Date";
+import Select from "./fields/Select";
+import MultiSelect from "./fields/MultiSelect";
 
 interface DataFieldProps {
   onChange: (value: any) => void;
@@ -16,43 +18,49 @@ const DataField: React.FC<DataFieldProps> = ({ onChange, value, field }) => {
   const commonProps = {
     readOnly: field.isReadonly,
     value,
+    onChange,
+    options: field.options,
   };
   if (CustomInput) {
-    return <CustomInput onChange={onChange} {...commonProps} />;
+    return <CustomInput {...commonProps} />;
   }
   switch (field.type) {
     case "int":
       return (
         <Input
           type="number"
+          step={1}
+          {...commonProps}
           onChange={(e) =>
             e.target.value ? onChange(Number(e.target.value)) : onChange(null)
           }
-          step={1}
-          {...commonProps}
         />
       );
     case "float":
       return (
         <Input
           type="number"
+          step={0.1}
+          {...commonProps}
           onChange={(e) =>
             e.target.value ? onChange(Number(e.target.value)) : onChange(null)
           }
-          step={0.1}
-          {...commonProps}
         />
       );
     case "boolean":
       return (
-        <Switch onChange={(e) => onChange(e.target.checked)} {...commonProps} />
+        <Switch {...commonProps} onChange={(e) => onChange(e.target.checked)} />
       );
     case "date":
-      return <Date onChange={onChange} {...commonProps} />;
+      return <Date {...commonProps} />;
+    case "select":
+      return <Select {...commonProps} />;
+    case "multiselect":
+      return <MultiSelect {...commonProps} />;
     case "string":
     default:
       return (
-        <Input onChange={(e) => onChange(e.target.value)} {...commonProps} />
+        <Input {...commonProps} onChange={(e) => onChange(e.target.value)} />
       );
   }
 };

@@ -10,5 +10,8 @@ export const completeField = (field: Partial<Field>, propName: string) => {
   field.label ??= propName;
   field.name ??= propName;
   field.type ??= "string";
+  if (field.type === "select" || field.type === "multiselect") {
+    field.options ??= [];
+  }
   return field;
 };

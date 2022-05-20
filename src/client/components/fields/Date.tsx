@@ -1,11 +1,6 @@
 import { Box, Flex, Input } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-
-export interface IDate {
-  day: number;
-  month: number;
-  year: number;
-}
+import type { IDate } from "../../../shared/IDate";
 
 interface DateProps {
   value: IDate;

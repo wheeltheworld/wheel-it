@@ -12,6 +12,16 @@ export const isTypeCorrect = (value: any, field: Field): boolean => {
       return typeof value === "boolean";
     case "date":
       return typeof value === "string" && isValidDate(value);
+    case "select":
+      return (
+        typeof value === "string" &&
+        field.options.map((o) => o.value).includes(value)
+      );
+    case "multiselect":
+      return (
+        Array.isArray(value) &&
+        value.every((v) => field.options.map((o) => o.value).includes(v))
+      );
     default:
       return false;
   }

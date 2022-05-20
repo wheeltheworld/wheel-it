@@ -7,18 +7,23 @@ import { dirname, join } from "path";
 import { genCrudModule } from "./genModuleCrud";
 import { genManifest } from "./genManifest";
 import type { Field } from "../shared/manifest";
+import type { CTX } from "./utils/ctx";
+import type { Parser } from "./utils/parseData";
 
 type PromiseOrNot<T> = T | Promise<T>;
 
 interface ModuleDeclaration {
   src: string;
   icon: string;
+  label?: string;
   name?: string;
 }
 
 export interface GenCrudSettings {
   modules: ModuleDeclaration[];
   modelsDir: string | RegExp;
+  parsers: Record<string, Parser<any>>;
+  unparsers: Record<string, Parser<any>>;
 }
 
 export interface Wheel {
@@ -38,6 +43,7 @@ export declare class CrudModel extends BaseEntity {
 }
 export interface Module {
   name: string;
+  label: string;
   icon: string;
   models: typeof CrudModel[];
 }
@@ -45,6 +51,8 @@ export interface Module {
 const defaultSettings: GenCrudSettings = {
   modules: [],
   modelsDir: "models",
+  parsers: {},
+  unparsers: {},
 };
 
 export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
@@ -75,6 +83,7 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
     }
     modules[name] = {
       name,
+      label: mod.label || name,
       icon: mod.icon,
       models: [],
     };
@@ -101,11 +110,17 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
 
   const manifest = genManifest(Object.values(modules));
 
+  const ctx: CTX = {
+    parsers: settings.parsers,
+    unparsers: settings.unparsers,
+    manifest,
+  };
+
   router.get(`/manifest`, (_req, res) => {
     return res.json(manifest);
   });
   for (const mod of Object.values(modules)) {
-    const middleware = genCrudModule(mod, manifest.modules[mod.name]);
+    const middleware = genCrudModule(mod, manifest.modules[mod.name], ctx);
     router.use(`/module`, middleware);
   }
   return Router().use("/_/api/", router);

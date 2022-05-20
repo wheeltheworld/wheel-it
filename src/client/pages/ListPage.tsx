@@ -79,7 +79,18 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
               {manifest?.fields.listables.map((field) => {
                 let value = item[field.name];
                 if (field.type === "date") {
-                  value = new Date(value).toLocaleDateString();
+                  value = `${value.day}/${value.month}/${value.year}`;
+                }
+                if (field.type === "select") {
+                  value = field.options.find((o) => o.value === value)?.label;
+                }
+                if (field.type === "multiselect") {
+                  value = value
+                    .map(
+                      (v: string) =>
+                        field.options.find((o) => o.value === v)?.label
+                    )
+                    .join(", ");
                 }
                 value = value?.toString();
                 return (

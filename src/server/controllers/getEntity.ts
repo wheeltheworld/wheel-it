@@ -1,8 +1,16 @@
 import type { RequestHandler } from "express";
+import type { ManifestModel } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
+import type { CTX } from "../utils/ctx";
+import { unparseData } from "../utils/parseData";
 
 export const getEntity =
-  (model: typeof CrudModel, key: string): RequestHandler =>
+  (
+    model: typeof CrudModel,
+    manifest: ManifestModel,
+    key: string,
+    ctx: CTX
+  ): RequestHandler =>
   async (req, res) => {
     const entity = await model.findOne({
       where: { [key]: req.params.value },
@@ -13,5 +21,5 @@ export const getEntity =
         .send(`${model.name} with ${key}: '${req.params.value}' not found`);
     }
     entity.hideHiddens();
-    return res.json(entity);
+    return res.json(unparseData(entity, manifest.fields.all, ctx.unparsers));
   };
