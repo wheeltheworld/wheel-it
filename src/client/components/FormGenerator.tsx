@@ -25,9 +25,8 @@ const SimpleFormGenerator: React.FC<SimpleFormGeneratorProps> = ({
 }) => {
   const [data, setData] = useState<Record<string, any>>(initValues || {});
   const handleChange = (name: string) => (value: any) => {
-    setData({ ...data, [name]: value });
+    setData((data) => ({ ...data, [name]: value }));
   };
-
   useEffect(() => {
     onChange?.(data);
   }, [data]);
