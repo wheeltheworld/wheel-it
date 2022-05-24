@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import type { ManifestModel } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
-import type { CTX } from "../utils/ctx";
+import type { CTX } from "../ctx";
 import { parseField } from "../utils/parseData";
 import { isNullOrUndefined } from "../utils/isNullOrUndefined";
 import { isTypeCorrect } from "../utils/isTypeCorrect";
@@ -36,6 +36,14 @@ export const updateEntity =
       value = parseField(field, value, ctx.parsers);
 
       entity[field.name as keyof CrudModel] = value;
+    }
+
+    for (const child of model.wheel.children) {
+      const ids = data[child.name];
+      if (!ids) continue;
+      const children = await child.target().findByIds(ids);
+      // @ts-ignore
+      entity[child.name as keyof CrudModel] = children;
     }
 
     await entity.beforeUpdate?.();

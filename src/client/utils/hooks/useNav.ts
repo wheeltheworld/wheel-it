@@ -18,13 +18,13 @@ export const useNav = (): NavLink[] => {
     const moduleLinks: NavLink[] = [];
     for (const model of Object.values(mod.models)) {
       moduleLinks.push({
-        label: model.name,
+        label: model.label,
         icon: model.icon,
         path: `/_/${moduleName}/${model.name}`,
       });
     }
     nav.push({
-      label: moduleName,
+      label: mod.label,
       icon: mod.icon,
       children: moduleLinks,
     });

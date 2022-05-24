@@ -19,7 +19,7 @@ const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
     return null;
   }
 
-  const fields = get({ moduleName, modelName }).fields;
+  const { fields, children } = get({ moduleName, modelName });
 
   const handleSubmit = async (data: any) => {
     const { data: ent } = await axios.post(
@@ -33,6 +33,8 @@ const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
 
     if (indexable) {
       push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
+    } else {
+      push(`/_/${moduleName}/${modelName}`);
     }
   };
 
@@ -44,6 +46,9 @@ const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
       <FormGenerator
         fields={fields.all.filter((f) => !f.isReadonly)}
         onSubmit={handleSubmit}
+        moduleName={moduleName}
+        modelName={modelName}
+        children={children}
       />
     </>
   );

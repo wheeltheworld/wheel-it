@@ -6,9 +6,10 @@ import callsite from "callsite";
 import { dirname, join } from "path";
 import { genCrudModule } from "./genModuleCrud";
 import { genManifest } from "./genManifest";
-import type { Field } from "../shared/manifest";
-import type { CTX } from "./utils/ctx";
+import type { Field, ManifestModel } from "../shared/manifest";
+import type { CTX } from "./ctx";
 import type { Parser } from "./utils/parseData";
+import type { ChildConfig } from "./decorators/Child";
 
 type PromiseOrNot<T> = T | Promise<T>;
 
@@ -29,7 +30,10 @@ export interface GenCrudSettings {
 export interface Wheel {
   isOkay: boolean;
   fields: Field[];
+  children: ChildConfig<any>[];
   icon?: string;
+  label?: string;
+  manifest: ManifestModel;
 }
 export declare class CrudModel extends BaseEntity {
   static wheel: Wheel;

@@ -7,7 +7,6 @@ interface NavbarProps {}
 
 const Navbar: React.FC<NavbarProps> = ({}) => {
   const items = useNav();
-  console.log({ items });
   return (
     <Box p="50px" borderBottom="1px solid lightgray" mb="30px" mx="50px">
       {items.map((item) =>

@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import type { ManifestModel } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
-import type { CTX } from "../utils/ctx";
+import type { CTX } from "../ctx";
 import { parseField } from "../utils/parseData";
 import { isNullOrUndefined } from "../utils/isNullOrUndefined";
 import { isTypeCorrect } from "../utils/isTypeCorrect";

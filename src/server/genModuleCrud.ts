@@ -2,7 +2,7 @@ import { RequestHandler, Router } from "express";
 import type { ManifestModule } from "../shared/manifest";
 import type { Module } from "./genCrud";
 import { genModelCrud } from "./genModelCrud";
-import type { CTX } from "./utils/ctx";
+import type { CTX } from "./ctx";
 import { modelName } from "./utils/modelName";
 
 export const genCrudModule = (

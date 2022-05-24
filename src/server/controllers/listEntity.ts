@@ -2,7 +2,7 @@ import type { RequestHandler } from "express";
 import { FindConditions, Like } from "typeorm";
 import type { ManifestModel } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
-import type { CTX } from "../utils/ctx";
+import type { CTX } from "../ctx";
 import { unparseData } from "../utils/parseData";
 
 export const listEntity =

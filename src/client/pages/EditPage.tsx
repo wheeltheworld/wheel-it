@@ -28,7 +28,7 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
     return null;
   }
 
-  const fields = get({ moduleName, modelName }).fields;
+  const { fields, children } = get({ moduleName, modelName });
 
   const handleSubmit = async (data: any) => {
     const { data: ent } = await axios.patch(
@@ -45,6 +45,8 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
 
     if (indexable) {
       push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
+    } else {
+      push(`/_/${moduleName}/${modelName}`);
     }
   };
 
@@ -76,6 +78,9 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
         fields={fields.all}
         onSubmit={handleSubmit}
         initValues={entity}
+        modelName={modelName}
+        moduleName={moduleName}
+        children={children}
       />
     </>
   );

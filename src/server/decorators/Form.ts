@@ -1,23 +1,27 @@
-import type { Field as IField } from "../shared/manifest";
-import type { Wheel } from "./genCrud";
-import { completeField } from "./utils/completeField";
+import type { Field as IField } from "../../shared/manifest";
+import type { Wheel } from "../genCrud";
 
 interface FormConfig {
   icon?: string;
+  label?: string;
 }
 
 export const Form =
   (config?: FormConfig): ClassDecorator =>
-  (ctr: Function & { wheel?: Wheel }) => {
+  (ctr: Function & { wheel?: Omit<Wheel, "manifest"> }) => {
     ctr.wheel ??= {
       isOkay: true,
       fields: [],
       icon: config?.icon,
+      children: [],
+      label: config?.label,
     };
 
     ctr.wheel.isOkay ??= true;
     ctr.wheel.fields ??= [];
     ctr.wheel.icon ??= config?.icon;
+    ctr.wheel.children ??= [];
+    ctr.wheel.label ??= config?.label;
 
     ctr.prototype.hideHiddens = function () {
       const hiddens = this.constructor.wheel.fields
@@ -28,14 +32,4 @@ export const Form =
         delete this[hidden];
       }
     };
-  };
-
-export const Field =
-  (f: Partial<IField> = {}): PropertyDecorator =>
-  (target: any, propertyKey) => {
-    if (typeof propertyKey !== "string") return;
-    target.constructor.wheel ??= {};
-    target.constructor.wheel.fields ??= [];
-    completeField(f, propertyKey);
-    target.constructor.wheel.fields.push(f);
   };

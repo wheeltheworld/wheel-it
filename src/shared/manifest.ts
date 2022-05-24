@@ -72,15 +72,24 @@ export type FieldType =
   | "select"
   | "multiselect";
 
+export interface ManifestChild {
+  relatedBy: string;
+  label: string;
+  name: string;
+}
+
 export interface ManifestModel {
   name: string;
+  label: string;
   icon?: string;
   fields: Record<"all" | "listables" | "indexables" | "searchables", Field[]>;
+  children: ManifestChild[];
 }
 
 export interface ManifestModule {
   name: string;
   icon?: string;
+  label: string;
   models: Record<string, ManifestModel>;
 }
 

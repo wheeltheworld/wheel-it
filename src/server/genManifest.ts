@@ -11,11 +11,13 @@ export const genManifest = (modules: Module[]): Manifest => {
     const mod: ManifestModule = {
       name: m.name,
       icon: m.icon,
+      label: m.label || m.name,
       models: {},
     };
     for (const model of m.models) {
       mod.models[modelName(model)] = {
         name: modelName(model),
+        label: model.wheel.label || modelName(model),
         icon: model.wheel.icon,
         fields: {
           all: model.wheel.fields,
@@ -25,7 +27,13 @@ export const genManifest = (modules: Module[]): Manifest => {
           ),
           searchables: model.wheel.fields.filter((f) => f.isSearchable),
         },
+        children: model.wheel.children.map((c) => ({
+          name: c.name,
+          label: c.label,
+          relatedBy: c.relatedBy,
+        })),
       };
+      model.wheel.manifest = mod.models[modelName(model)];
     }
     manifest.modules[m.name] = mod;
   }

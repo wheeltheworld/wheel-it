@@ -34,15 +34,20 @@ const useManifest = () => {
     moduleName,
     by,
     value,
+    children,
   }: {
     moduleName: string;
     modelName: string;
     by?: string;
     value?: string;
+    children?: string;
   }) => {
     const base = `/_/api/module/${moduleName}/model/${modelName}`;
     if (by) {
       return `${base}/${by}/${value}`;
+    }
+    if (children) {
+      return `${base}/children/${children}`;
     }
     return base;
   };
