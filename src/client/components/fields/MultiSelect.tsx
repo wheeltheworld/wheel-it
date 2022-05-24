@@ -25,7 +25,7 @@ const MultiSelect: React.FC<SelectProps> = ({
               key={option.value}
               readOnly={readOnly}
             >
-              {option.value}
+              {option.label}
             </Checkbox>
           ))}
         </Stack>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Select as ChakraSelect } from "@chakra-ui/react";
 import type { Option } from "../../../shared/manifest";
 
@@ -15,6 +15,11 @@ const Select: React.FC<SelectProps> = ({
   readOnly,
   options,
 }) => {
+  useEffect(() => {
+    if (!value) {
+      onChange(options[0]?.value);
+    }
+  }, []);
   return (
     <>
       <ChakraSelect
