@@ -7,9 +7,11 @@ export interface ChildConfig<T extends abstract new () => object> {
   relatedBy: string;
   target: () => typeof CrudModel;
   toString: (a: InstanceType<T>) => string;
+  many: boolean;
 }
 
-export const Child =
+const RelatesTo =
+  (many: boolean) =>
   <T extends typeof BaseEntity>(
     child: () => T,
     config: Partial<Exclude<ChildConfig<T>, "target">> = {}
@@ -21,20 +23,26 @@ export const Child =
     completeChild(
       config,
       propertyKey,
-      child as unknown as () => typeof CrudModel
+      child as unknown as () => typeof CrudModel,
+      many
     );
     target.constructor.wheel.children.push(config);
   };
 
+export const RelatesToOne = RelatesTo(false);
+export const RelatesToMany = RelatesTo(true);
+
 export const completeChild = (
   child: Partial<ChildConfig<any>>,
   propertyKey: string,
-  target: () => typeof CrudModel
+  target: () => typeof CrudModel,
+  many: boolean
 ) => {
   child.name ??= propertyKey;
   child.label ??= propertyKey;
   child.relatedBy ??= "id";
   child.toString ??= (data) => JSON.stringify(data);
   child.target = target;
+  child.many = many;
   return child;
 };

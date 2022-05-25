@@ -6,6 +6,7 @@ import FormGenerator from "../components/FormGenerator";
 import { useEntity } from "../utils/hooks/useEntity";
 import useManifest from "../utils/hooks/useManifest";
 import { Link as RouterLink } from "react-router-dom";
+import { useNotification } from "../utils/hooks/useNotification";
 
 interface EditPageProps {
   moduleName: string;
@@ -23,43 +24,67 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
   });
   const { push } = useHistory();
   const { manifest, endpoint, get } = useManifest();
+  const { success, error } = useNotification();
 
   if (!manifest) {
     return null;
   }
 
-  const { fields, children } = get({ moduleName, modelName });
+  const { fields, children, label } = get({ moduleName, modelName });
 
   const handleSubmit = async (data: any) => {
-    const { data: ent } = await axios.patch(
-      endpoint({
-        modelName,
-        moduleName,
-        by,
-        value,
-      }),
-      data
-    );
+    try {
+      const { data: ent } = await axios.patch(
+        endpoint({
+          modelName,
+          moduleName,
+          by,
+          value,
+        }),
+        data
+      );
 
-    const indexable = fields.indexables[0]?.name;
+      const indexable = fields.indexables[0]?.name;
 
-    if (indexable) {
-      push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
-    } else {
-      push(`/_/${moduleName}/${modelName}`);
+      success({
+        title: "Success",
+        description: `${label} updated successfully`,
+      });
+
+      if (indexable) {
+        push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
+      } else {
+        push(`/_/${moduleName}/${modelName}`);
+      }
+    } catch (e) {
+      error({
+        title: "Error",
+        description: `${e}`,
+      });
     }
   };
 
   const handleDelete = async () => {
-    await axios.delete(
-      endpoint({
-        modelName,
-        moduleName,
-        by,
-        value,
-      })
-    );
-    push(`/_/${moduleName}/${modelName}`);
+    try {
+      await axios.delete(
+        endpoint({
+          modelName,
+          moduleName,
+          by,
+          value,
+        })
+      );
+      success({
+        title: "Success",
+        description: `${label} deleted successfully`,
+      });
+      push(`/_/${moduleName}/${modelName}`);
+    } catch (e) {
+      error({
+        title: "Error",
+        description: `${e}`,
+      });
+    }
   };
 
   if (!entity) {

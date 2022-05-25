@@ -29,8 +29,9 @@ export const genManifest = (modules: Module[]): Manifest => {
         },
         children: model.wheel.children.map((c) => ({
           name: c.name,
-          label: c.label,
+          label: c.label || c.name,
           relatedBy: c.relatedBy,
+          many: c.many,
         })),
       };
       model.wheel.manifest = mod.models[modelName(model)];

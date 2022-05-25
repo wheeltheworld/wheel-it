@@ -3,6 +3,7 @@ import { Box, Button, FormControl, FormLabel } from "@chakra-ui/react";
 import DataField from "./DataField";
 import type { Field, ManifestChild } from "../../shared/manifest";
 import ChildrenAdder from "./fields/ChildrenAdder";
+import ChildSelector from "./fields/ChildSelector";
 
 export interface SimpleFormGeneratorProps {
   initValues?: any;
@@ -52,13 +53,23 @@ const SimpleFormGenerator: React.FC<SimpleFormGeneratorProps> = ({
       {children.map((child) => (
         <FormControl key={child.name}>
           <FormLabel>{child.label || child.name}</FormLabel>
-          <ChildrenAdder
-            modelName={modelName}
-            moduleName={moduleName}
-            childName={child.name}
-            onChange={handleChange(child.name)}
-            value={data[child.name]}
-          />
+          {child.many ? (
+            <ChildrenAdder
+              modelName={modelName}
+              moduleName={moduleName}
+              childName={child.name}
+              onChange={handleChange(child.name)}
+              value={data[child.name]}
+            />
+          ) : (
+            <ChildSelector
+              modelName={modelName}
+              moduleName={moduleName}
+              childName={child.name}
+              onChange={handleChange(child.name)}
+              value={data[child.name]}
+            />
+          )}
         </FormControl>
       ))}
       <Button type="submit">Save</Button>

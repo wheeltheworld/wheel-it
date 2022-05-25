@@ -5,6 +5,7 @@ import type { CTX } from "../ctx";
 import { parseField } from "../utils/parseData";
 import { isNullOrUndefined } from "../utils/isNullOrUndefined";
 import { isTypeCorrect } from "../utils/isTypeCorrect";
+import { In } from "typeorm";
 
 export const updateEntity =
   (
@@ -39,11 +40,41 @@ export const updateEntity =
     }
 
     for (const child of model.wheel.children) {
-      const ids = data[child.name];
-      if (!ids) continue;
-      const children = await child.target().findByIds(ids);
-      // @ts-ignore
-      entity[child.name as keyof CrudModel] = children;
+      const childModel = child.target();
+      if (child.many) {
+        const ids = data[child.name];
+        if (!ids) continue;
+        if (!Array.isArray(ids)) {
+          return res
+            .status(400)
+            .send(`invalid field ${child.name}, expected array`);
+        }
+        const children = await childModel.find({
+          where: { [child.relatedBy]: In(ids) },
+        });
+        // @ts-ignore
+        entity[child.name as keyof CrudModel] = children;
+      } else {
+        const id = data[child.name];
+        if (!id) continue;
+        if (["string", "number"].includes(typeof id)) {
+          return res
+            .status(400)
+            .send(`invalid field ${child.name}, expected string or number`);
+        }
+        const childEntity = await childModel.findOne({
+          where: { [child.relatedBy]: id },
+        });
+        if (!childEntity) {
+          return res
+            .status(404)
+            .send(
+              `${childModel.name} with ${child.relatedBy}: '${id}' not found`
+            );
+        }
+        // @ts-ignore
+        entity[child.name as keyof CrudModel] = childEntity;
+      }
     }
 
     await entity.beforeUpdate?.();

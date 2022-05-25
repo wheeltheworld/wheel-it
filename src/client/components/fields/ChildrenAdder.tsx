@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
-import React, { useEffect } from "react";
-import { Child, useChildEntities } from "../../utils/hooks/useChildEntities";
+import React, { useEffect, useState } from "react";
+import { Child, useChildSearch } from "../../utils/hooks/useChildSearch";
 
 interface ChildrenAdderProps {
   modelName: string;
@@ -17,19 +17,30 @@ const ChildrenAdder: React.FC<ChildrenAdderProps> = ({
   value,
   onChange,
 }) => {
-  const { children, options, onSelect, onRemove, search, onSearch } =
-    useChildEntities(
-      {
-        modelName,
-        moduleName,
-        childName,
-      },
-      value || []
-    );
+  const [children, setChildren] = useState<Child[]>(value || []);
+  const { search, onSearch, onClear, options } = useChildSearch({
+    modelName,
+    moduleName,
+    childName,
+  });
 
   useEffect(() => {
     onChange?.(children.map((child) => child.value));
   }, [children]);
+
+  const handleRemove = (option: Child) => () => {
+    setChildren((children) =>
+      children.filter((child) => child.value !== option.value)
+    );
+  };
+
+  const handleAdd = (option: Child) => () => {
+    if (!children.find((child) => child.value === option.value)) {
+      setChildren((children) => [...children, option]);
+      onClear();
+    }
+  };
+
   return (
     <Box position="relative">
       <Flex>
@@ -46,7 +57,7 @@ const ChildrenAdder: React.FC<ChildrenAdderProps> = ({
           >
             {child.label}
             <Button
-              onClick={onRemove(child)}
+              onClick={handleRemove(child)}
               fontSize="16px"
               variant="ghost"
               borderRadius="100%"
@@ -66,7 +77,7 @@ const ChildrenAdder: React.FC<ChildrenAdderProps> = ({
         {options.map((option) => (
           <Button
             key={option.value}
-            onClick={onSelect(option)}
+            onClick={handleAdd(option)}
             borderRadius="0"
           >
             {option.label}

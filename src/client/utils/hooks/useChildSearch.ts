@@ -3,24 +3,24 @@ import { useState } from "react";
 import { useAsyncEffect } from "./useAsyncEffect";
 import useManifest from "./useManifest";
 
-export interface Child {
-  value: number | string;
-  label: string;
-}
-
-interface UseChildEntities {
+interface UseChildSearch {
   moduleName: string;
   modelName: string;
   childName: string;
 }
 
-export const useChildEntities = (
-  { moduleName, modelName, childName }: UseChildEntities,
-  init: Child[]
-) => {
+export interface Child {
+  label: string;
+  value: string | number;
+}
+
+export const useChildSearch = ({
+  moduleName,
+  modelName,
+  childName,
+}: UseChildSearch) => {
   const [options, setOptions] = useState<Child[]>([]);
   const [search, setSearch] = useState("");
-  const [children, setChildren] = useState<Child[]>(init || []);
   const { endpoint } = useManifest();
 
   useAsyncEffect(async () => {
@@ -37,17 +37,10 @@ export const useChildEntities = (
     }
   }, [modelName, moduleName, childName, search]);
 
-  const onSelect = (option: Child) => () => {
-    if (!children.find((child) => child.value === option.value)) {
-      setChildren([...children, option]);
-      setSearch("");
-      setOptions([]);
-    }
+  const onClear = () => {
+    setSearch("");
+    setOptions([]);
   };
 
-  const onRemove = (option: Child) => () => {
-    setChildren(children.filter((o) => o.value !== option.value));
-  };
-
-  return { children, options, onSelect, onRemove, search, onSearch: setSearch };
+  return { options, onClear, search, onSearch: setSearch };
 };

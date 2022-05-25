@@ -76,6 +76,7 @@ export interface ManifestChild {
   relatedBy: string;
   label: string;
   name: string;
+  many: boolean;
 }
 
 export interface ManifestModel {

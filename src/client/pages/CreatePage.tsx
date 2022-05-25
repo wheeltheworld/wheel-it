@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import useManifest from "../utils/hooks/useManifest";
 import { Button } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
+import { useNotification } from "../utils/hooks/useNotification";
 
 interface CreatePageProps {
   moduleName: string;
@@ -14,27 +15,38 @@ interface CreatePageProps {
 const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
   const { endpoint, manifest, get } = useManifest();
   const { push } = useHistory();
+  const { success, error } = useNotification();
 
   if (!manifest) {
     return null;
   }
 
-  const { fields, children } = get({ moduleName, modelName });
+  const { fields, children, label } = get({ moduleName, modelName });
 
   const handleSubmit = async (data: any) => {
-    const { data: ent } = await axios.post(
-      endpoint({
-        modelName,
-        moduleName,
-      }),
-      data
-    );
-    const indexable = fields.indexables[0]?.name;
-
-    if (indexable) {
-      push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
-    } else {
-      push(`/_/${moduleName}/${modelName}`);
+    try {
+      const { data: ent } = await axios.post(
+        endpoint({
+          modelName,
+          moduleName,
+        }),
+        data
+      );
+      const indexable = fields.indexables[0]?.name;
+      success({
+        title: `Success`,
+        description: `${label} created successfully`,
+      });
+      if (indexable) {
+        push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
+      } else {
+        push(`/_/${moduleName}/${modelName}`);
+      }
+    } catch (e) {
+      error({
+        title: `Error`,
+        description: `${e}`,
+      });
     }
   };
 

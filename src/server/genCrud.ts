@@ -9,7 +9,7 @@ import { genManifest } from "./genManifest";
 import type { Field, ManifestModel } from "../shared/manifest";
 import type { CTX } from "./ctx";
 import type { Parser } from "./utils/parseData";
-import type { ChildConfig } from "./decorators/Child";
+import type { ChildConfig } from "./decorators/RelatesTo";
 
 type PromiseOrNot<T> = T | Promise<T>;
 
