@@ -16,17 +16,17 @@ declare global {
 }
 
 const useManifest = () => {
-  const [manifest, setManifest] = useState<Manifest>();
-
+  const [manifest, setManifest] = useState<Manifest | undefined>(
+    typeof window !== "undefined" ? window.__WHEEL__?.manifest : undefined
+  );
   useAsyncEffect(async () => {
-    if (window.__WHEEL__?.manifest) {
-      setManifest(window.__WHEEL__.manifest);
+    if (manifest) {
       return;
     }
-    const { data: manifest } = await axios("/_/api/manifest");
-    setManifest(manifest);
-    window.__WHEEL__ ??= { manifest };
-    window.__WHEEL__.manifest ??= manifest;
+    const { data: m } = await axios("/_/api/manifest");
+    setManifest(m);
+    window.__WHEEL__ ??= { manifest: m };
+    window.__WHEEL__.manifest ??= m;
   }, []);
 
   const endpoint = ({
@@ -34,20 +34,20 @@ const useManifest = () => {
     moduleName,
     by,
     value,
-    children,
+    relationName,
   }: {
     moduleName: string;
     modelName: string;
     by?: string;
     value?: string;
-    children?: string;
+    relationName?: string;
   }) => {
     const base = `/_/api/module/${moduleName}/model/${modelName}`;
     if (by) {
       return `${base}/${by}/${value}`;
     }
-    if (children) {
-      return `${base}/children/${children}`;
+    if (relationName) {
+      return `${base}/relations/${relationName}`;
     }
     return base;
   };

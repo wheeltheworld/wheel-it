@@ -4,6 +4,7 @@ import type { Wheel } from "../genCrud";
 interface FormConfig {
   icon?: string;
   label?: string;
+  isAutonomous?: boolean;
 }
 
 export const Form =
@@ -11,16 +12,18 @@ export const Form =
   (ctr: Function & { wheel?: Omit<Wheel, "manifest"> }) => {
     ctr.wheel ??= {
       isOkay: true,
+      isAutonomous: config?.isAutonomous ?? true,
       fields: [],
       icon: config?.icon,
-      children: [],
+      relations: [],
       label: config?.label,
     };
 
+    ctr.wheel.isAutonomous ??= config?.isAutonomous ?? true;
     ctr.wheel.isOkay ??= true;
     ctr.wheel.fields ??= [];
     ctr.wheel.icon ??= config?.icon;
-    ctr.wheel.children ??= [];
+    ctr.wheel.relations ??= [];
     ctr.wheel.label ??= config?.label;
 
     ctr.prototype.hideHiddens = function () {

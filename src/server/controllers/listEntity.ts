@@ -1,63 +1,53 @@
-import type { RequestHandler } from "express";
 import { FindConditions, Like } from "typeorm";
-import type { ManifestModel } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
-import type { CTX } from "../ctx";
 import { unparseData } from "../utils/parseData";
+import { Controller, response } from "../utils/controller";
 
-export const listEntity =
-  (
-    model: typeof CrudModel,
-    manifest: ManifestModel,
-    ctx: CTX
-  ): RequestHandler =>
-  async (req, res) => {
-    const limit = Math.min(Number(req.query.limit) || 25, 100);
-    const offset = Number(req.query.page) * limit || 0;
-    const query = req.query.query?.toString() || "";
-    if (!query.match(/^[A-z\d\s]*$/)) {
-      return res.status(400).json({
-        error: "Invalid query",
-      });
-    }
-    let [items, count] = await model.findAndCount({
-      take: limit,
-      skip: offset,
-      where: req.query.query
-        ? (manifest.fields.searchables
-            .map((f) => {
-              if (f.type === "string") {
-                return {
-                  [f.name]: Like(`%${req.query.query}%`),
-                };
-              }
-              if (
-                (f.type === "int" || f.type === "float") &&
-                isNaN(Number(req.query.query))
-              ) {
-                return undefined;
-              }
+export const listEntity: Controller = async (model, ctx, data) => {
+  const limit = Math.min(Number(data.limit) || 25, 100);
+  const offset = Number(data.page) * limit || 0;
+  const query = data.query?.toString() || "";
+  if (!query.match(/^[A-z\d\s]*$/)) {
+    return response("Invalid query", 400);
+  }
+  let [items, count] = await model.findAndCount({
+    take: limit,
+    skip: offset,
+    where: data.query
+      ? (model.wheel.manifest.fields.searchables
+          .map((f) => {
+            if (f.type === "string") {
               return {
-                [f.name]: req.query.query,
+                [f.name]: Like(`%${query}%`),
               };
-            })
-            .filter(Boolean) as FindConditions<CrudModel>)
-        : undefined,
-      order: req.query.sortBy
-        ? {
-            [req.query.sortBy as string]: req.query.sortOrder || "ASC",
-          }
-        : undefined,
-    });
-    items = items.map((item) => {
-      item.hideHiddens();
-      return unparseData(item, manifest.fields.all, ctx.unparsers);
-    });
-    return res.json({
-      items,
-      pages: Math.ceil(count / limit),
-      amount: limit,
-      total: count,
-      page: offset / limit,
-    });
-  };
+            }
+            if (
+              (f.type === "int" || f.type === "float") &&
+              isNaN(Number(query))
+            ) {
+              return undefined;
+            }
+            return {
+              [f.name]: query,
+            };
+          })
+          .filter(Boolean) as FindConditions<CrudModel>)
+      : undefined,
+    order: data.sortBy
+      ? {
+          [data.sortBy as string]: data.sortOrder || "ASC",
+        }
+      : undefined,
+  });
+  items = items.map((item) => {
+    item.hideHiddens();
+    return unparseData(item, model.wheel.manifest.fields.all, ctx.unparsers);
+  });
+  return response({
+    items,
+    pages: Math.ceil(count / limit),
+    amount: limit,
+    total: count,
+    page: offset / limit,
+  });
+};

@@ -1,3 +1,12 @@
+const relations = [
+  "relatesToOne",
+  "relatesToMany",
+  "ownsOne",
+  "ownsMany",
+] as const;
+
+export type Relation = typeof relations[number];
+
 export interface Option {
   value: string;
   label: string;
@@ -72,11 +81,12 @@ export type FieldType =
   | "select"
   | "multiselect";
 
-export interface ManifestChild {
+export interface ManifestRelation {
   relatedBy: string;
+  relationName: string;
   label: string;
   name: string;
-  many: boolean;
+  type: Relation;
 }
 
 export interface ManifestModel {
@@ -84,7 +94,8 @@ export interface ManifestModel {
   label: string;
   icon?: string;
   fields: Record<"all" | "listables" | "indexables" | "searchables", Field[]>;
-  children: ManifestChild[];
+  relations: ManifestRelation[];
+  isAutonomous?: boolean;
 }
 
 export interface ManifestModule {

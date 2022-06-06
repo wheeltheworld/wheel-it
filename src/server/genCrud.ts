@@ -9,7 +9,7 @@ import { genManifest } from "./genManifest";
 import type { Field, ManifestModel } from "../shared/manifest";
 import type { CTX } from "./ctx";
 import type { Parser } from "./utils/parseData";
-import type { ChildConfig } from "./decorators/RelatesTo";
+import type { ChildConfig } from "./decorators/relations";
 
 type PromiseOrNot<T> = T | Promise<T>;
 
@@ -29,8 +29,9 @@ export interface GenCrudSettings {
 
 export interface Wheel {
   isOkay: boolean;
+  isAutonomous: boolean;
   fields: Field[];
-  children: ChildConfig<any>[];
+  relations: ChildConfig<any>[];
   icon?: string;
   label?: string;
   manifest: ManifestModel;
@@ -121,7 +122,7 @@ export const genCrud = (options?: Partial<GenCrudSettings>): RequestHandler => {
   };
 
   router.get(`/manifest`, (_req, res) => {
-    return res.json(manifest);
+    return res.status(200).json(manifest);
   });
   for (const mod of Object.values(modules)) {
     const middleware = genCrudModule(mod, manifest.modules[mod.name], ctx);

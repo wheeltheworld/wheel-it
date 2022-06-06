@@ -17,6 +17,7 @@ export const useNav = (): NavLink[] => {
     const moduleName = mod.name;
     const moduleLinks: NavLink[] = [];
     for (const model of Object.values(mod.models)) {
+      if (!model.isAutonomous) continue;
       moduleLinks.push({
         label: model.label,
         icon: model.icon,

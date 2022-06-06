@@ -11,6 +11,7 @@ interface PaginatorProps {
   pages: number;
   page: number;
   onChange: (page: Page) => void;
+  withAmount?: boolean;
 }
 
 /**
@@ -21,6 +22,7 @@ const Paginator: React.FC<PaginatorProps> = ({
   pages: max,
   page,
   onChange,
+  withAmount = true,
 }) => {
   const [amount, setAmount] = useState(25);
   const [current, setCurrent] = useState(page - 1 || 0);
@@ -54,18 +56,20 @@ const Paginator: React.FC<PaginatorProps> = ({
           </Button>
         )
       )}
-      <Select
-        width="unset"
-        flexShrink={0}
-        onChange={(e) => {
-          setAmount(Number(e.target.value));
-          setCurrent(0);
-        }}
-      >
-        <option value={25}>25</option>
-        <option value={50}>50</option>
-        <option value={100}>100</option>
-      </Select>
+      {withAmount && (
+        <Select
+          width="unset"
+          flexShrink={0}
+          onChange={(e) => {
+            setAmount(Number(e.target.value));
+            setCurrent(0);
+          }}
+        >
+          <option value={25}>25</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </Select>
+      )}
     </Flex>
   );
 };

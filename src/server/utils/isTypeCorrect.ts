@@ -1,6 +1,8 @@
 import type { Field } from "../../shared/manifest";
+import { isNullOrUndefined } from "./isNullOrUndefined";
 
 export const isTypeCorrect = (value: any, field: Field): boolean => {
+  if (!field.isRequired && isNullOrUndefined(value)) return true;
   switch (field.type) {
     case "string":
       return typeof value === "string";

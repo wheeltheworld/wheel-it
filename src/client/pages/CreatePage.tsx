@@ -6,6 +6,7 @@ import useManifest from "../utils/hooks/useManifest";
 import { Button } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { useNotification } from "../utils/hooks/useNotification";
+import { cleanData, RelationModifies } from "../utils/funcs/cleanData";
 
 interface CreatePageProps {
   moduleName: string;
@@ -21,16 +22,17 @@ const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
     return null;
   }
 
-  const { fields, children, label } = get({ moduleName, modelName });
+  const model = get({ moduleName, modelName });
+  const { fields, label } = model;
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: any, modifies: RelationModifies) => {
     try {
       const { data: ent } = await axios.post(
         endpoint({
           modelName,
           moduleName,
         }),
-        data
+        cleanData(model, data, modifies)
       );
       const indexable = fields.indexables[0]?.name;
       success({
@@ -56,11 +58,9 @@ const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
         Go Back
       </Button>
       <FormGenerator
-        fields={fields.all.filter((f) => !f.isReadonly)}
         onSubmit={handleSubmit}
         moduleName={moduleName}
         modelName={modelName}
-        children={children}
       />
     </>
   );

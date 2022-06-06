@@ -1,18 +1,22 @@
 import React from "react";
 import { Input, Switch } from "@chakra-ui/react";
-import type { Field } from "../../shared/manifest";
-import { useWheel } from "./WheelProvider";
-import Date from "./fields/Date";
-import Select from "./fields/Select";
-import MultiSelect from "./fields/MultiSelect";
+import type { Field } from "../../../shared/manifest";
+import { useWheel } from "../WheelProvider";
+import Date from "../fields/Date";
+import Select from "../fields/Select";
+import MultiSelect from "../fields/MultiSelect";
 
-interface DataFieldProps {
+interface FieldSelectorProps {
   onChange: (value: any) => void;
   value: any;
   field: Field;
 }
 
-const DataField: React.FC<DataFieldProps> = ({ onChange, value, field }) => {
+const FieldSelector: React.FC<FieldSelectorProps> = ({
+  onChange,
+  value,
+  field,
+}) => {
   const { customInputs } = useWheel();
   const CustomInput = customInputs?.[field.type];
   const commonProps = {
@@ -65,4 +69,4 @@ const DataField: React.FC<DataFieldProps> = ({ onChange, value, field }) => {
   }
 };
 
-export default DataField;
+export default FieldSelector;

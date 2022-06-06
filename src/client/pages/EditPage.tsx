@@ -30,7 +30,7 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
     return null;
   }
 
-  const { fields, children, label } = get({ moduleName, modelName });
+  const { fields, label } = get({ moduleName, modelName });
 
   const handleSubmit = async (data: any) => {
     try {
@@ -100,12 +100,10 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
         Delete
       </Button>
       <FormGenerator
-        fields={fields.all}
         onSubmit={handleSubmit}
         initValues={entity}
         modelName={modelName}
         moduleName={moduleName}
-        children={children}
       />
     </>
   );

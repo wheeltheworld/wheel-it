@@ -1,13 +1,12 @@
 import { RequestHandler, Router } from "express";
 import type { ManifestModel } from "../shared/manifest";
-import { createEntity } from "./controllers/createEntity";
-import { deleteEntity } from "./controllers/deleteEntity";
-import { listEntity } from "./controllers/listEntity";
-import { updateEntity } from "./controllers/updateEntity";
 import type { CrudModel } from "./genCrud";
-import { getEntity } from "./controllers/getEntity";
 import type { CTX } from "./ctx";
-import { searchChildren } from "./controllers/searchChildren";
+import { getEntityHandler } from "./handlers/getEntity";
+import { updateEntityHandler } from "./handlers/updateEntityHandler";
+import { deleteEntityHandler } from "./handlers/deleteEntityHandler";
+import { listEntityHandler } from "./handlers/listEntity";
+import { createEntityHandler } from "./handlers/createEntityHandler";
 
 export const genModelCrud = (
   model: typeof CrudModel,
@@ -16,34 +15,29 @@ export const genModelCrud = (
 ): RequestHandler => {
   const router = Router();
 
-  router.get("/", listEntity(model, manifest, ctx));
-  router.post("/", createEntity(model, manifest, ctx));
-  for (const child of manifest.children) {
-    router.get(
-      `/children/${child.name}`,
-      searchChildren(model, child.name, ctx)
-    );
-  }
+  router.get("/", listEntityHandler(model, ctx));
+  if (manifest.isAutonomous) {
+    router.post("/", createEntityHandler(model, ctx));
 
-  for (const indexable of manifest.fields.indexables) {
-    if (indexable.name === "children") {
-      throw new Error(
-        "INVALID INDEXABLE KEY 'children', PLEASE CHANGE THE NAME OF THE FIELD"
+    for (const indexable of manifest.fields.indexables) {
+      if (indexable.name === "children") {
+        throw new Error(
+          "INVALID INDEXABLE KEY 'children', PLEASE CHANGE THE NAME OF THE FIELD"
+        );
+      }
+      router.get(
+        `/${indexable.name}/:value`,
+        getEntityHandler(model, ctx, indexable.name)
+      );
+      router.patch(
+        `/${indexable.name}/:value`,
+        updateEntityHandler(model, ctx, indexable.name)
+      );
+      router.delete(
+        `/${indexable.name}/:value`,
+        deleteEntityHandler(model, ctx, indexable.name)
       );
     }
-    router.get(
-      `/${indexable.name}/:value`,
-      getEntity(model, manifest, indexable.name, ctx)
-    );
-    router.patch(
-      `/${indexable.name}/:value`,
-      updateEntity(model, manifest, indexable.name, ctx)
-    );
-    router.delete(
-      `/${indexable.name}/:value`,
-      deleteEntity(model, indexable.name)
-    );
   }
-
   return Router().use(`/${manifest.name}`, router);
 };

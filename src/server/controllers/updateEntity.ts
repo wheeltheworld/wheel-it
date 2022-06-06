@@ -1,37 +1,38 @@
-import type { RequestHandler } from "express";
-import type { ManifestModel } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
-import type { CTX } from "../ctx";
 import { parseField } from "../utils/parseData";
-import { isNullOrUndefined } from "../utils/isNullOrUndefined";
 import { isTypeCorrect } from "../utils/isTypeCorrect";
-import { In } from "typeorm";
+import { Controller, response } from "../utils/controller";
+import { createEntity } from "./createEntity";
 
 export const updateEntity =
-  (
-    model: typeof CrudModel,
-    manifest: ManifestModel,
-    key: string,
-    ctx: CTX
-  ): RequestHandler =>
-  async (req, res) => {
-    const entity = await model.findOne({
-      where: { [key]: req.params.value },
+  (key: string): Controller =>
+  async (model, ctx, data, by) => {
+    const entity = await model.findOne<CrudModel>({
+      where: { [key]: by },
+      relations: model.wheel.relations
+        .filter((r) => r.type === "ownsOne")
+        .map((r) => r.name),
     });
     if (!entity) {
-      return res
-        .status(404)
-        .send(`${model.name} with ${key}: '${req.params.value}' not found`);
+      return response(`${model.name} with ${key}: '${by}' not found`, 404);
     }
-    const data = req.body;
-    for (const field of manifest.fields.all) {
+    for (const field of model.wheel.manifest.fields.all) {
       if (field.isReadonly) continue;
       let value = data[field.name];
-      if (isNullOrUndefined(value)) continue;
+      if (value === undefined) continue;
+      if (value === null) {
+        if (field.isRequired) {
+          return response(`${field.name} is required`, 400);
+        }
+
+        // @ts-ignore
+        entity[field.name] = null;
+      }
       if (!isTypeCorrect(value, field)) {
-        return res
-          .status(400)
-          .send(`invalid field ${field.name}, expected type ${field.type}`);
+        return response(
+          `invalid field ${field.name}, expected type ${field.type}`,
+          400
+        );
       }
 
       value = parseField(field, value, ctx.parsers);
@@ -39,41 +40,80 @@ export const updateEntity =
       entity[field.name as keyof CrudModel] = value;
     }
 
-    for (const child of model.wheel.children) {
-      const childModel = child.target();
-      if (child.many) {
-        const ids = data[child.name];
-        if (!ids) continue;
-        if (!Array.isArray(ids)) {
-          return res
-            .status(400)
-            .send(`invalid field ${child.name}, expected array`);
-        }
-        const children = await childModel.find({
-          where: { [child.relatedBy]: In(ids) },
-        });
-        // @ts-ignore
-        entity[child.name as keyof CrudModel] = children;
-      } else {
-        const id = data[child.name];
-        if (!id) continue;
-        if (["string", "number"].includes(typeof id)) {
-          return res
-            .status(400)
-            .send(`invalid field ${child.name}, expected string or number`);
-        }
-        const childEntity = await childModel.findOne({
-          where: { [child.relatedBy]: id },
-        });
-        if (!childEntity) {
-          return res
-            .status(404)
-            .send(
-              `${childModel.name} with ${child.relatedBy}: '${id}' not found`
+    for (const relation of model.wheel.relations) {
+      const relationModel = relation.target();
+      const relationData = data[relation.name];
+      switch (relation.type) {
+        case "relatesToOne":
+          if (relationData === undefined) continue;
+          if (relationData === null) {
+            // @ts-ignore
+            entity[relation.name as keyof CrudModel] = null;
+            continue;
+          }
+          if (!["string", "number"].includes(typeof relationData)) {
+            return response(
+              `invalid field ${relation.name}, expected string or number`,
+              400
             );
-        }
-        // @ts-ignore
-        entity[child.name as keyof CrudModel] = childEntity;
+          }
+          const relationEntity = await relationModel.findOne({
+            where: { [relation.relatedBy]: relationData },
+          });
+          if (!relationEntity) {
+            return response(
+              `${relationModel.name} with ${relation.relatedBy}: '${relationData}' not found`,
+              400
+            );
+          }
+          // @ts-ignore
+          entity[relation.name as keyof CrudModel] = relationEntity;
+          break;
+        case "ownsOne":
+          if (!entity[relation.name as keyof CrudModel]) {
+            const created = await createEntity(
+              relationModel,
+              ctx,
+              relationData
+            );
+            entity[relation.name as keyof CrudModel] = created.body;
+            break;
+          }
+          const res = await updateEntity(relation.relatedBy)(
+            relationModel,
+            ctx,
+            relationData,
+            relationData[relation.relatedBy]
+          );
+          entity[relation.name as keyof CrudModel] = res.body;
+          break;
+        case "relatesToMany":
+        case "ownsMany":
+          const savedRels = [];
+          if (relationData === undefined) continue;
+          for (const rel of relationData) {
+            if (typeof rel === "object") {
+              if (relation.relatedBy in rel) {
+                const res = await updateEntity(relation.relatedBy)(
+                  relationModel,
+                  ctx,
+                  rel,
+                  rel[relation.relatedBy]
+                );
+                savedRels.push(res.body);
+              } else {
+                const res = await createEntity(relationModel, ctx, rel);
+                savedRels.push(res.body);
+              }
+            } else if (["string", "number"].includes(typeof relationData)) {
+              savedRels.push({ [relation.relatedBy]: relationData });
+            }
+          }
+          // @ts-ignore
+          entity[relation.name as keyof CrudModel] = savedRels;
+          break;
+        default:
+          throw new Error(`unknown relation type ${relation.type}`);
       }
     }
 
@@ -82,5 +122,5 @@ export const updateEntity =
     await entity.afterUpdate?.();
     entity.hideHiddens();
 
-    return res.json(entity);
+    return response(entity);
   };

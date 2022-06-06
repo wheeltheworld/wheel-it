@@ -18,6 +18,7 @@ export const genManifest = (modules: Module[]): Manifest => {
       mod.models[modelName(model)] = {
         name: modelName(model),
         label: model.wheel.label || modelName(model),
+        isAutonomous: model.wheel.isAutonomous,
         icon: model.wheel.icon,
         fields: {
           all: model.wheel.fields,
@@ -27,11 +28,12 @@ export const genManifest = (modules: Module[]): Manifest => {
           ),
           searchables: model.wheel.fields.filter((f) => f.isSearchable),
         },
-        children: model.wheel.children.map((c) => ({
-          name: c.name,
-          label: c.label || c.name,
-          relatedBy: c.relatedBy,
-          many: c.many,
+        relations: model.wheel.relations.map((r) => ({
+          name: modelName(r.target()),
+          relationName: r.name,
+          label: r.label || r.name,
+          relatedBy: r.relatedBy,
+          type: r.type,
         })),
       };
       model.wheel.manifest = mod.models[modelName(model)];

@@ -1,17 +1,15 @@
-import type { RequestHandler } from "express";
 import { getRepository } from "typeorm";
 import type { CrudModel } from "../genCrud";
+import { Controller, response } from "../utils/controller";
 
 export const deleteEntity =
-  (model: typeof CrudModel, key: string): RequestHandler =>
-  async (req, res) => {
-    const entity = await model.findOne({
-      where: { [key]: req.params.value },
+  (key: string): Controller =>
+  async (model, _ctx, _data, by) => {
+    const entity = await model.findOne<CrudModel>({
+      where: { [key]: by },
     });
     if (!entity) {
-      return res
-        .status(404)
-        .send(`${model.name} with ${key}: '${req.params.value}' not found`);
+      return response(`${model.name} with ${key}: '${by}' not found`, 404);
     }
 
     await entity.beforeDelete?.();
@@ -22,5 +20,5 @@ export const deleteEntity =
     }
     await entity.afterDelete?.();
 
-    return res.json(true);
+    return response(true);
   };

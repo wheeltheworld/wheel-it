@@ -27,7 +27,8 @@ export const useRoutes = (
   if (!manifest) return routes;
 
   for (const m of Object.values(manifest.modules)) {
-    for (const model of Object.values(m.models)) {
+    models: for (const model of Object.values(m.models)) {
+      if (!model.isAutonomous) continue models;
       const createRoute = (
         <Route
           path={`/_/${m.name}/${model.name}/create`}

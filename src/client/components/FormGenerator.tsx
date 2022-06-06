@@ -1,80 +1,86 @@
 import React, { FormEventHandler, useEffect, useState } from "react";
 import { Box, Button, FormControl, FormLabel } from "@chakra-ui/react";
-import DataField from "./DataField";
-import type { Field, ManifestChild } from "../../shared/manifest";
-import ChildrenAdder from "./fields/ChildrenAdder";
-import ChildSelector from "./fields/ChildSelector";
+import FieldSelector from "./selector/FieldSelector";
+import RelationSwitch from "./selector/RelationSwitch";
+import useManifest from "../utils/hooks/useManifest";
+import type { RelationModifies } from "../utils/funcs/cleanData";
 
-export interface SimpleFormGeneratorProps {
+export interface FormGeneratorProps {
   initValues?: any;
-  fields: Field[];
-  children: ManifestChild[];
   onChange?: (values: any) => void;
-  onSubmit?: (values: any) => void;
+  onSubmit?: (values: any, relationModifies: RelationModifies) => void;
   modelName: string;
   moduleName: string;
+  isChild?: boolean;
 }
 
-const SimpleFormGenerator: React.FC<SimpleFormGeneratorProps> = ({
-  fields,
+const FormGenerator: React.FC<FormGeneratorProps> = ({
   onChange,
   onSubmit,
   initValues,
-  children,
   modelName,
   moduleName,
+  isChild,
 }) => {
   const [data, setData] = useState<Record<string, any>>(initValues || {});
-  const handleChange = (name: string) => (value: any) => {
-    setData((data) => ({ ...data, [name]: value }));
-  };
+  const [modifies, setModifies] = useState<RelationModifies>({});
+  const { fields, relations } = useManifest().get({ moduleName, modelName });
   useEffect(() => {
     onChange?.(data);
   }, [data]);
 
+  const handleChange = (name: string) => (value: any) => {
+    setData((data) => ({ ...data, [name]: value }));
+  };
+
+  const handleRelationChange =
+    (name: string) => (value: any, relationModifies?: any[]) => {
+      setData((data) => ({ ...data, [name]: value }));
+      if (relationModifies)
+        setModifies((modifies) => ({ ...modifies, [name]: relationModifies }));
+    };
+
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
 
-    onSubmit?.(data);
+    onSubmit?.(data, modifies);
   };
 
-  return (
-    <Box as="form" onSubmit={handleSubmit}>
-      {fields.map((field) => (
+  const form = (
+    <>
+      {fields.all.map((field) => (
         <FormControl key={field.name}>
           <FormLabel>{field.label || field.name}</FormLabel>
-          <DataField
+          <FieldSelector
             onChange={handleChange(field.name)}
             value={data[field.name]}
             field={field}
           />
         </FormControl>
       ))}
-      {children.map((child) => (
-        <FormControl key={child.name}>
-          <FormLabel>{child.label || child.name}</FormLabel>
-          {child.many ? (
-            <ChildrenAdder
-              modelName={modelName}
-              moduleName={moduleName}
-              childName={child.name}
-              onChange={handleChange(child.name)}
-              value={data[child.name]}
-            />
-          ) : (
-            <ChildSelector
-              modelName={modelName}
-              moduleName={moduleName}
-              childName={child.name}
-              onChange={handleChange(child.name)}
-              value={data[child.name]}
-            />
-          )}
-        </FormControl>
+      {relations.map((relation) => (
+        <RelationSwitch
+          relation={relation}
+          onChange={handleRelationChange(relation.relationName)}
+          value={data[relation.relationName]}
+          moduleName={moduleName}
+          modelName={modelName}
+          childName={relation.name}
+        />
       ))}
+    </>
+  );
+
+  if (isChild) {
+    return form;
+  }
+
+  return (
+    <Box as="form" onSubmit={handleSubmit}>
+      {form}
       <Button type="submit">Save</Button>
     </Box>
   );
 };
 
-export default SimpleFormGenerator;
+export default FormGenerator;
