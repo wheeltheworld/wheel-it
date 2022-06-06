@@ -1,21 +1,32 @@
 import React from "react";
 import axios from "axios";
-import { Button } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Tr,
+} from "@chakra-ui/react";
 import { useHistory, useParams } from "react-router-dom";
-import FormGenerator from "../components/FormGenerator";
 import { useEntity } from "../utils/hooks/useEntity";
 import useManifest from "../utils/hooks/useManifest";
 import { Link as RouterLink } from "react-router-dom";
 import { useNotification } from "../utils/hooks/useNotification";
-import { cleanData, RelationModifies } from "../utils/funcs/cleanData";
+import { fieldValueToString } from "../utils/funcs/fieldValueToString";
 
-interface EditPageProps {
+interface PreviewPageProps {
   moduleName: string;
   modelName: string;
   by: string;
 }
 
-const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
+const PreviewPage: React.FC<PreviewPageProps> = ({
+  moduleName,
+  modelName,
+  by,
+}) => {
   const { value } = useParams<{ value: string }>();
   const entity = useEntity({
     moduleName,
@@ -33,38 +44,6 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
 
   const model = get({ moduleName, modelName });
   const { fields, label } = model;
-
-  const handleSubmit = async (data: any, modifies: RelationModifies) => {
-    try {
-      const { data: ent } = await axios.patch(
-        endpoint({
-          modelName,
-          moduleName,
-          by,
-          value,
-        }),
-        cleanData(model, data, modifies)
-      );
-
-      const indexable = fields.indexables[0]?.name;
-
-      success({
-        title: "Success",
-        description: `${label} updated successfully`,
-      });
-
-      if (indexable) {
-        push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
-      } else {
-        push(`/_/${moduleName}/${modelName}`);
-      }
-    } catch (e) {
-      error({
-        title: "Error",
-        description: `${e}`,
-      });
-    }
-  };
 
   const handleDelete = async () => {
     try {
@@ -97,21 +76,42 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
     <>
       <Button
         as={RouterLink}
-        to={`/_/${moduleName}/${modelName}/${by}/${entity[by]}`}
+        to={`/_/${moduleName}/${modelName}/`}
+        variant="ghost"
       >
         Go Back
       </Button>
-      <Button colorScheme="red" onClick={handleDelete}>
-        Delete
-      </Button>
-      <FormGenerator
-        onSubmit={handleSubmit}
-        initValues={entity}
-        modelName={modelName}
-        moduleName={moduleName}
-      />
+      <TableContainer whiteSpace="unset">
+        <Table size="sm" variant="unstyled">
+          <Tbody>
+            {fields.previewables.map((field) => (
+              <Tr key={field.name}>
+                <Td w="170px" valign="top">
+                  <b>{field.label}: </b>
+                </Td>
+                <Td valign="top">
+                  {fieldValueToString(field, entity[field.name])}
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
+
+      <Flex>
+        <Button
+          as={RouterLink}
+          colorScheme="blue"
+          to={`/_/${moduleName}/${modelName}/${by}/${value}/edit`}
+        >
+          Edit
+        </Button>
+        <Button colorScheme="red" onClick={handleDelete}>
+          Delete
+        </Button>
+      </Flex>
     </>
   );
 };
 
-export default EditPage;
+export default PreviewPage;

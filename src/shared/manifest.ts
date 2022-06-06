@@ -49,6 +49,11 @@ export interface Field {
    */
   isListable: boolean;
   /**
+   * Is this field showable in the preview view
+   * @default {true}
+   */
+  isPreviewable: boolean;
+  /**
    * Can this field be searched by the client
    * @default {false}
    */
@@ -93,7 +98,10 @@ export interface ManifestModel {
   name: string;
   label: string;
   icon?: string;
-  fields: Record<"all" | "listables" | "indexables" | "searchables", Field[]>;
+  fields: Record<
+    "all" | "listables" | "indexables" | "searchables" | "previewables",
+    Field[]
+  >;
   relations: ManifestRelation[];
   isAutonomous?: boolean;
 }

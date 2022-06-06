@@ -20,7 +20,7 @@ export const useEntity = ({
   const { manifest, endpoint } = useManifest();
 
   useAsyncEffect(async () => {
-    if (manifest) return;
+    if (!manifest) return;
     const url = endpoint({ moduleName, modelName, by, value });
     const { data } = await axios.get(url);
     setEntity(data);

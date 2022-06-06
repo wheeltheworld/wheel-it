@@ -4,6 +4,7 @@ import { useWheel } from "../../../client/components/WheelProvider";
 import CreatePage from "../../../client/pages/CreatePage";
 import EditPage from "../../../client/pages/EditPage";
 import ListPage from "../../../client/pages/ListPage";
+import PreviewPage from "../../pages/PreviewPage";
 import useManifest from "./useManifest";
 
 interface UseRoutes {
@@ -51,9 +52,25 @@ export const useRoutes = (
       );
       routes.push(createRoute, listRoute);
       for (const indexable of model.fields.indexables) {
-        const editRoute = (
+        const previewRoute = (
           <Route
             path={`/_/${m.name}/${model.name}/${indexable.name}/:value`}
+            key={`preview-${m.name}.${model.name}.${indexable.name}`}
+            exact
+            component={() =>
+              wrap(
+                <PreviewPage
+                  modelName={model.name}
+                  moduleName={m.name}
+                  by={indexable.name}
+                />
+              )
+            }
+          />
+        );
+        const editRoute = (
+          <Route
+            path={`/_/${m.name}/${model.name}/${indexable.name}/:value/edit`}
             key={`edit-${m.name}.${model.name}.${indexable.name}`}
             exact
             component={() =>
@@ -67,7 +84,7 @@ export const useRoutes = (
             }
           />
         );
-        routes.push(editRoute);
+        routes.push(editRoute, previewRoute);
       }
     }
   }

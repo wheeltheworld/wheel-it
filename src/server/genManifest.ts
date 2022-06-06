@@ -27,6 +27,7 @@ export const genManifest = (modules: Module[]): Manifest => {
             (f) => f.isListable && !f.isHidden
           ),
           searchables: model.wheel.fields.filter((f) => f.isSearchable),
+          previewables: model.wheel.fields.filter((f) => f.isPreviewable),
         },
         relations: model.wheel.relations.map((r) => ({
           name: modelName(r.target()),

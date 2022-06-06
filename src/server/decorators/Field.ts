@@ -14,6 +14,7 @@ export const completeField = (field: Partial<IField>, propName: string) => {
   field.isHidden ??= false;
   field.isReadonly ??= false;
   field.isListable ??= true;
+  field.isPreviewable ??= true;
   field.isRequired ??= false;
   field.isSearchable ??= false;
   field.indexable ??= false;

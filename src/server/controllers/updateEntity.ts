@@ -9,9 +9,7 @@ export const updateEntity =
   async (model, ctx, data, by) => {
     const entity = await model.findOne<CrudModel>({
       where: { [key]: by },
-      relations: model.wheel.relations
-        .filter((r) => r.type === "ownsOne")
-        .map((r) => r.name),
+      relations: model.wheel.relations.map((r) => r.name),
     });
     if (!entity) {
       return response(`${model.name} with ${key}: '${by}' not found`, 404);
@@ -43,6 +41,7 @@ export const updateEntity =
     for (const relation of model.wheel.relations) {
       const relationModel = relation.target();
       const relationData = data[relation.name];
+      if (!relationData) continue;
       switch (relation.type) {
         case "relatesToOne":
           if (relationData === undefined) continue;
