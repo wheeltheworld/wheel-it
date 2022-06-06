@@ -7,6 +7,7 @@ import { useEntity } from "../utils/hooks/useEntity";
 import useManifest from "../utils/hooks/useManifest";
 import { Link as RouterLink } from "react-router-dom";
 import { useNotification } from "../utils/hooks/useNotification";
+import { cleanData, RelationModifies } from "../utils/funcs/cleanData";
 
 interface EditPageProps {
   moduleName: string;
@@ -30,9 +31,10 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
     return null;
   }
 
-  const { fields, label } = get({ moduleName, modelName });
+  const model = get({ moduleName, modelName });
+  const { fields, label } = model;
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: any, modifies: RelationModifies) => {
     try {
       const { data: ent } = await axios.patch(
         endpoint({
@@ -41,7 +43,7 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
           by,
           value,
         }),
-        data
+        cleanData(model, data, modifies)
       );
 
       const indexable = fields.indexables[0]?.name;

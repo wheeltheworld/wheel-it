@@ -31,25 +31,24 @@ export const createEntity: Controller = async (model, ctx, data) => {
     const relationData = data[relation.name];
     switch (relation.type) {
       case "relatesToOne":
-        const id = data[relation.name];
-        if (id === undefined) continue;
-        if (id === null) {
+        if (relationData === undefined) continue;
+        if (relationData === null) {
           // @ts-ignore
           entity[relation.name as keyof CrudModel] = null;
           continue;
         }
-        if (!["string", "number"].includes(typeof id)) {
+        if (!["string", "number"].includes(typeof relationData)) {
           return response(
             `invalid field ${relation.name}, expected string or number`,
             400
           );
         }
         const relationEntity = await relationModel.findOne({
-          where: { [relation.relatedBy]: id },
+          where: { [relation.relatedBy]: relationData },
         });
         if (!relationEntity) {
           return response(
-            `${relationModel.name} with ${relation.relatedBy}: '${id}' not found`,
+            `${relationModel.name} with ${relation.relatedBy}: '${relationData}' not found`,
             400
           );
         }
@@ -60,6 +59,7 @@ export const createEntity: Controller = async (model, ctx, data) => {
         if (!entity[relation.name as keyof CrudModel]) {
           const created = await createEntity(relationModel, ctx, relationData);
           entity[relation.name as keyof CrudModel] = created.body;
+          break;
         }
         const res = await updateEntity(relation.relatedBy)(
           relationModel,
