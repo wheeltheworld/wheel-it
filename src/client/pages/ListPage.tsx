@@ -68,9 +68,10 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
       <Table mt="20px">
         <Thead>
           <Tr>
-            {manifest?.fields.listables.map((field) => (
-              <Th key={field.name}>{field.label || field.name}</Th>
-            ))}
+            {manifest?.fields.listables.map((field) => {
+              console.log(field);  
+              return <Th key={field.name}>{field.label || field.name}</Th>
+            })}
           </Tr>
         </Thead>
         <Tbody>

@@ -30,6 +30,13 @@ export const genManifest = (modules: Module[]): Manifest => {
           previewables: model.wheel.fields.filter((f) => f.isPreviewable),
         },
         relations: model.wheel.relations.map((r) => ({
+          isHidden: r.isHidden,
+          isReadonly: r.isReadonly,
+          isListable: r.isListable,
+          isPreviewable: r.isPreviewable,
+          isRequired: r.isRequired,
+          isSearchable: r.isSearchable,
+          indexable: r.indexable,
           name: modelName(r.target()),
           relationName: r.name,
           label: r.label || r.name,
