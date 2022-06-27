@@ -55,10 +55,6 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
   listables.sort((a, b) => (a.position > b.position) ? 1 : -1);
   indexables.sort((a, b) => (a.position > b.position) ? 1 : -1);
 
-  console.log(listables);
-  console.log(indexables);
-
-
   useEffect(() => {
     push(
       `/_/${moduleName}/${modelName}?page=${page}&amount=${amount}&search=${search}`
