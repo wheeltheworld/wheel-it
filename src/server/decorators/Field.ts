@@ -6,8 +6,8 @@ export const Field =
     if (typeof propertyKey !== "string") return;
     target.constructor.wheel ??= {};
     target.constructor.wheel.fields ??= [];
-    completeField(f, propertyKey);
-    target.constructor.wheel.fields.push(f);
+    const completedField = completeField(f, propertyKey);
+    target.constructor.wheel.fields.push(completedField);
   };
 
 export const completeField = (field: Partial<IField>, propName: string) => {

@@ -77,13 +77,13 @@ const Relation =
     if (typeof propertyKey !== "string") return;
     target.constructor.wheel ??= {};
     target.constructor.wheel.relations ??= [];
-    completeRelation(
+    const completedRelation = completeRelation(
       config,
       propertyKey,
       child as unknown as () => typeof CrudModel,
       type
     );
-    target.constructor.wheel.relations.push(config);
+    target.constructor.wheel.relations.push(completedRelation);
   };
 
 export const RelatesToOne = Relation("relatesToOne");
