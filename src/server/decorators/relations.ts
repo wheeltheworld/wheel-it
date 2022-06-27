@@ -3,8 +3,10 @@ import type { Relation } from "../../shared/manifest";
 import type { CrudModel } from "../genCrud";
 
 export interface ChildConfig<T extends abstract new () => any> {
-  target: () => typeof CrudModel;
-  toString: (a: InstanceType<T>) => string;
+  /**
+   * Position of the field in the columns
+   */
+  position: number;
   /**
    * Label for the field
    */
@@ -57,9 +59,12 @@ export interface ChildConfig<T extends abstract new () => any> {
    * @default {false}
    */
   indexable: boolean;
+  showInForm: boolean;
 
   relatedBy: string;
   relationName: string;
+  target: () => typeof CrudModel;
+  toString: (a: InstanceType<T>) => string;
 }
 
 const Relation =
@@ -92,13 +97,15 @@ export const completeRelation = (
   target: () => typeof CrudModel,
   type: Relation
 ) => {
+  child.position ??= 0;
   child.isHidden ??= false;
   child.isReadonly ??= false;
   child.isListable ??= true;
   child.isPreviewable ??= true;
-  child.isRequired ??= false;
+  child.isRequired ??= true;
   child.isSearchable ??= false;
   child.indexable ??= false;
+  child.showInForm ??= true;
   child.name ??= propertyKey;
   child.label ??= propertyKey;
   child.relatedBy ??= "id";

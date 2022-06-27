@@ -25,6 +25,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
   const [data, setData] = useState<Record<string, any>>(initValues || {});
   const [modifies, setModifies] = useState<RelationModifies>({});
   const { fields, relations } = useManifest().get({ moduleName, modelName });
+
   useEffect(() => {
     onChange?.(data);
   }, [data]);
@@ -42,13 +43,12 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
-
     onSubmit?.(data, modifies);
   };
 
   const form = (
     <>
-      {fields.all.map((field) => (
+      {fields.all.map((field) => field.showInForm && (
         <FormControl key={field.name}>
           <FormLabel>{field.label || field.name}</FormLabel>
           <FieldSelector
@@ -58,8 +58,9 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
           />
         </FormControl>
       ))}
-      {relations.map((relation) => (
+      {relations.map((relation) => relation.showInForm && (
         <RelationSwitch
+          key={relation.name}
           relation={relation}
           onChange={handleRelationChange(relation.relationName)}
           value={data[relation.relationName]}

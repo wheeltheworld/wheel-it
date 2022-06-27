@@ -22,14 +22,13 @@ export const genManifest = (modules: Module[]): Manifest => {
         icon: model.wheel.icon,
         fields: {
           all: model.wheel.fields,
-          indexables: model.wheel.fields.filter((f) => f.indexable),
-          listables: model.wheel.fields.filter(
-            (f) => f.isListable && !f.isHidden
-          ),
-          searchables: model.wheel.fields.filter((f) => f.isSearchable),
-          previewables: model.wheel.fields.filter((f) => f.isPreviewable),
+          indexables: model.wheel.fields.filter(f => f.indexable),
+          listables: model.wheel.fields.filter(f => f.isListable && !f.isHidden),
+          searchables: model.wheel.fields.filter(f => f.isSearchable),
+          previewables: model.wheel.fields.filter(f => f.isPreviewable),
         },
         relations: model.wheel.relations.map((r) => ({
+          position: r.position,
           isHidden: r.isHidden,
           isReadonly: r.isReadonly,
           isListable: r.isListable,
@@ -37,6 +36,7 @@ export const genManifest = (modules: Module[]): Manifest => {
           isRequired: r.isRequired,
           isSearchable: r.isSearchable,
           indexable: r.indexable,
+          showInForm: r.showInForm,
           name: modelName(r.target()),
           relationName: r.name,
           label: r.label || r.name,

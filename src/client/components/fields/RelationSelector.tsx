@@ -39,6 +39,7 @@ const RelationSelector: React.FC<RelationSelectorProps> = ({
   onChange,
 }) => {
   const manifest = useManifest().get({ moduleName, modelName: childName });
+  console.log(manifest);
   const [selected, setSelected] = useState(value || null);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");

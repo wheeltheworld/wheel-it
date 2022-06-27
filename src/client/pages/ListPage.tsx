@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
+import type { Field, ManifestRelation } from "../../shared/manifest";
 import Paginator from "../components/Paginator";
 import { useEntities } from "../utils/hooks/useEntities";
 import useManifest from "../utils/hooks/useManifest";
@@ -22,12 +23,17 @@ interface ListPageProps {
   modelName: string;
 }
 
+type FieldsAndRels = (Field | ManifestRelation)[];
+
 const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
-  const manifest = useManifest().get({ moduleName, modelName });
   const query = useQuery();
-  const [page, setPage] = useState(Number(query.get("page")) || 1);
-  const [amount, setAmount] = useState(Number(query.get("amount")) || 25);
-  const [search, setSearch] = useState(query.get("search") || "");
+  const manifest = useManifest().get({ moduleName, modelName });
+
+  const [ page, setPage ] = useState(Number(query.get("page")) || 1);
+  const [ amount, setAmount ] = useState(Number(query.get("amount")) || 25);
+  const [ search, setSearch ] = useState(query.get("search") || "");
+
+  const { push } = useHistory();
   const { items, pages } = useEntities({
     moduleName,
     modelName,
@@ -35,7 +41,23 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
     amount,
     query: search,
   });
-  const { push } = useHistory();
+
+  const listableRels: FieldsAndRels = manifest?.relations.filter(f => f.isListable && !f.isHidden);
+  const indexableRels: FieldsAndRels = manifest?.relations.filter((f) => f.indexable);
+
+  const listables: FieldsAndRels = ([] as FieldsAndRels)
+    .concat(manifest?.fields.listables, listableRels)
+    .filter(Boolean);
+  const indexables: FieldsAndRels = ([] as FieldsAndRels)
+    .concat(manifest?.fields.indexables, indexableRels)
+    .filter(Boolean);
+
+  listables.sort((a, b) => (a.position > b.position) ? 1 : -1);
+  indexables.sort((a, b) => (a.position > b.position) ? 1 : -1);
+
+  console.log(listables);
+  console.log(indexables);
+
 
   useEffect(() => {
     push(
@@ -68,8 +90,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
       <Table mt="20px">
         <Thead>
           <Tr>
-            {manifest?.fields.listables.map((field) => {
-              console.log(field);  
+            {listables.map((field) => {
               return <Th key={field.name}>{field.label || field.name}</Th>
             })}
           </Tr>
@@ -77,7 +98,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
         <Tbody>
           {items?.map((item, i) => (
             <Tr key={i}>
-              {manifest?.fields.listables.map((field) => {
+              {listables.map((field) => {
                 let value = item[field.name];
                 if (field.type === "date") {
                   value = `${value.day}/${value.month}/${value.year}`;
@@ -96,7 +117,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
                 value = value?.toString();
                 return (
                   <Td key={field.name}>
-                    {manifest.fields.indexables
+                    {indexables
                       .map((f) => f.name)
                       .includes(field.name) ? (
                       <Link

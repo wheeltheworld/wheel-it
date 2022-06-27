@@ -14,6 +14,10 @@ export interface Option {
 
 export interface Field {
   /**
+   * Position of the field in the columns
+   */
+  position: number;
+  /**
    * Label for the field
    */
   label: string;
@@ -65,6 +69,7 @@ export interface Field {
    * @default {false}
    */
   indexable: boolean;
+  showInForm: boolean;
 
   /**
    * The default value for the field
@@ -82,11 +87,16 @@ export type FieldType =
   | "int"
   | "float"
   | "boolean"
+  | "email"
   | "date"
   | "select"
   | "multiselect";
 
 export interface ManifestRelation {
+  /**
+   * Position of the field in the columns
+   */
+  position: number;
   /**
    * Label for the field
    */
@@ -139,6 +149,7 @@ export interface ManifestRelation {
    * @default {false}
    */
   indexable: boolean;
+  showInForm: boolean;
 
   relatedBy: string;
   relationName: string;

@@ -21,6 +21,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
   const CustomInput = customInputs?.[field.type];
   const commonProps = {
     readOnly: field.isReadonly,
+    isRequired: field.isRequired,
     value,
     onChange,
     options: field.options,
@@ -49,6 +50,14 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
           onChange={(e) =>
             e.target.value ? onChange(Number(e.target.value)) : onChange(null)
           }
+        />
+      );
+    case "email":
+      return (
+        <Input
+          type="email"
+          {...commonProps}
+          onChange={(e) => onChange(e.target.value)}
         />
       );
     case "boolean":
