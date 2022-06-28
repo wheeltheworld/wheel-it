@@ -1,7 +1,21 @@
 {
-  "name": "wheel-it",
-  "version": "0.11.0",
-  "repository": "git@github.com:wheeltheworld/wheelIt.git",
+  "name": "@wheeltheworld/wheel-it",
+  "version": "0.11.1",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/wheeltheworld/wheelIt.git"
+  },
+  "description": "Framework to scale cruds and wheel the world :D",
+  "bugs": {
+    "url": "https://github.com/wheeltheworld/wheelIt/issues"
+  },
+  "homepage": "https://github.com/wheeltheworld/wheelIt#readme",
+  "keywords": [
+    "crud",
+    "automatization",
+    "chakra",
+    "typeorm"
+  ],
   "author": "martinmunillas <martinmunillas@gmail.com>",
   "license": "MIT",
   "scripts": {
