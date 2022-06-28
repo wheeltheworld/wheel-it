@@ -6,6 +6,7 @@ interface SelectProps {
   value: string[];
   onChange: (value: string[]) => void;
   readOnly: boolean;
+  isRequired: boolean;
   options: Option[];
 }
 
@@ -13,6 +14,7 @@ const MultiSelect: React.FC<SelectProps> = ({
   value,
   onChange,
   readOnly,
+  isRequired,
   options,
 }) => {
   return (
@@ -24,6 +26,7 @@ const MultiSelect: React.FC<SelectProps> = ({
               value={option.value}
               key={option.value}
               readOnly={readOnly}
+              isRequired={isRequired}
             >
               {option.label}
             </Checkbox>

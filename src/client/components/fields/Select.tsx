@@ -6,6 +6,7 @@ interface SelectProps {
   value: string;
   onChange: (value: string) => void;
   readOnly: boolean;
+  isRequired: boolean;
   options: Option[];
 }
 
@@ -13,19 +14,23 @@ const Select: React.FC<SelectProps> = ({
   value,
   onChange,
   readOnly,
+  isRequired,
   options,
 }) => {
+
   useEffect(() => {
     if (!value) {
       onChange(options[0]?.value);
     }
   }, []);
+
   return (
     <>
       <ChakraSelect
         value={value}
         onChange={(e) => onChange(e.target.value)}
         isReadOnly={readOnly}
+        isRequired={isRequired}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
