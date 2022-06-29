@@ -41,7 +41,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
         setModifies((modifies) => ({ ...modifies, [name]: relationModifies }));
     };
 
-  const handleSubmit: FormEventHandler = async (e) => {
+  const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
     onSubmit?.(data, modifies);
   };
