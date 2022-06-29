@@ -36,6 +36,7 @@ export interface Wheel {
   label?: string;
   manifest: ManifestModel;
 }
+
 export declare class CrudModel extends BaseEntity {
   static wheel: Wheel;
   hideHiddens(): void;
@@ -46,6 +47,7 @@ export declare class CrudModel extends BaseEntity {
   beforeDelete?(): PromiseOrNot<void>;
   afterDelete?(): PromiseOrNot<void>;
 }
+
 export interface Module {
   name: string;
   label: string;

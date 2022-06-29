@@ -6,12 +6,19 @@ interface DateProps {
   value: IDate;
   onChange: (value: IDate) => void;
   readOnly: boolean;
+  isRequired: boolean;
 }
 
-const Date: React.FC<DateProps> = ({ value, onChange, readOnly }) => {
+const Date: React.FC<DateProps> = ({
+  value,
+  onChange,
+  readOnly,
+  isRequired,
+}) => {
   const [date, setDate] = useState<Partial<IDate>>(value || {});
   const [error, setError] = useState<string>("");
   const [shouldShowError, setShouldShowError] = useState(false);
+
   const handleChange =
     (type: keyof IDate) => (e: React.ChangeEvent<HTMLInputElement>) => {
       setDate({
@@ -37,6 +44,7 @@ const Date: React.FC<DateProps> = ({ value, onChange, readOnly }) => {
           value={date.day}
           width="80px"
           readOnly={readOnly}
+          isRequired={isRequired}
         />
         /
         <Input
@@ -44,6 +52,7 @@ const Date: React.FC<DateProps> = ({ value, onChange, readOnly }) => {
           value={date.month}
           width="80px"
           readOnly={readOnly}
+          isRequired={isRequired}
         />
         /
         <Input
@@ -51,6 +60,7 @@ const Date: React.FC<DateProps> = ({ value, onChange, readOnly }) => {
           value={date.year}
           width="80px"
           readOnly={readOnly}
+          isRequired={isRequired}
         />
       </Flex>
       <Box color="lightgray">dd/mm/yyyy</Box>

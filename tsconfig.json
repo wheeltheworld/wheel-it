@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "lib": ["dom", "es6", "es2017", "esnext.asynciterable"],
+    "target": "es2022",
+    "lib": ["dom", "es2022"],
+    "module": "node16",
+    "moduleResolution": "node16",
     "skipLibCheck": true,
     "sourceMap": true,
     "removeComments": false,
     "outDir": "./dist",
-    "moduleResolution": "node",
     "jsx": "react",
     "noImplicitAny": true,
     "forceConsistentCasingInFileNames": true,
