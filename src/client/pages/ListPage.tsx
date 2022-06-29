@@ -29,9 +29,9 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
   const query = useQuery();
   const manifest = useManifest().get({ moduleName, modelName });
 
-  const [ page, setPage ] = useState(Number(query.get("page")) || 1);
-  const [ amount, setAmount ] = useState(Number(query.get("amount")) || 25);
-  const [ search, setSearch ] = useState(query.get("search") || "");
+  const [page, setPage] = useState(Number(query.get("page")) || 1);
+  const [amount, setAmount] = useState(Number(query.get("amount")) || 25);
+  const [search, setSearch] = useState(query.get("search") || "");
 
   const { push } = useHistory();
   const { items, pages } = useEntities({
@@ -42,8 +42,12 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
     query: search,
   });
 
-  const listableRels: FieldsAndRels = manifest?.relations.filter(f => f.isListable && !f.isHidden);
-  const indexableRels: FieldsAndRels = manifest?.relations.filter((f) => f.indexable);
+  const listableRels: FieldsAndRels = manifest?.relations.filter(
+    (f) => f.isListable && !f.isHidden
+  );
+  const indexableRels: FieldsAndRels = manifest?.relations.filter(
+    (f) => f.indexable
+  );
 
   const listables: FieldsAndRels = ([] as FieldsAndRels)
     .concat(manifest?.fields.listables, listableRels)
@@ -52,8 +56,8 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
     .concat(manifest?.fields.indexables, indexableRels)
     .filter(Boolean);
 
-  listables.sort((a, b) => (a.position > b.position) ? 1 : -1);
-  indexables.sort((a, b) => (a.position > b.position) ? 1 : -1);
+  listables.sort((a, b) => a.position - b.position);
+  indexables.sort((a, b) => a.position - b.position);
 
   useEffect(() => {
     push(
@@ -87,7 +91,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
         <Thead>
           <Tr>
             {listables.map((field) => {
-              return <Th key={field.name}>{field.label || field.name}</Th>
+              return <Th key={field.name}>{field.label || field.name}</Th>;
             })}
           </Tr>
         </Thead>
@@ -113,9 +117,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
                 value = value?.toString();
                 return (
                   <Td key={field.name}>
-                    {indexables
-                      .map((f) => f.name)
-                      .includes(field.name) ? (
+                    {indexables.map((f) => f.name).includes(field.name) ? (
                       <Link
                         as={RouterLink}
                         to={`/_/${moduleName}/${modelName}/${field.name}/${

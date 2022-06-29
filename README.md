@@ -1,2 +1,3 @@
-# wheel.js
-Framework to scale cruds and wheel the world :D
+# wheel it
+
+A framework to create CRUD views based on Chakra UI and TypeORM.
