@@ -50,7 +50,7 @@
     "rollup": "^2.75.7",
     "rollup-plugin-ts": "^3.0.2",
     "ts-node": "^10.7.0",
-    "typeorm": "^0.2.37",
+    "typeorm": "0.2.37",
     "typescript": "^4.7.4"
   },
   "dependencies": {
@@ -64,6 +64,6 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "5",
-    "typeorm": "^0.2.37"
+    "typeorm": "0.2.37"
   }
 }
