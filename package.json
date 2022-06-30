@@ -1,6 +1,6 @@
 {
   "name": "@wheeltheworld/wheel-it",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/wheeltheworld/wheelIt.git"
@@ -24,10 +24,12 @@
   "exports": {
     "./server": {
       "import": "./dist/server.esm.js",
+      "require": "./dist/server.cjs.js",
       "types": "./dist/server.esm.d.ts"
     },
     "./client": {
       "import": "./dist/client.esm.js",
+      "require": "./dist/client.cjs.js",
       "types": "./dist/client.esm.d.ts"
     }
   },
