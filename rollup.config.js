@@ -16,7 +16,12 @@ const bundle = ({ name, path }) => ({
       file: `./${buildDir}/${name}.esm.js`,
       format: "esm",
       sourcemap: true,
-    }
+    },
+    {
+      file: `./${buildDir}/${name}.cjs.js`,
+      format: "cjs",
+      sourcemap: true,
+    },
   ],
   plugins: [
     tsb(),
