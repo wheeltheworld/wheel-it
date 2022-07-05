@@ -22,6 +22,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
   moduleName,
   isChild,
 }) => {
+  const [submitted, setSubmitted] = useState<boolean>(false);
   const [data, setData] = useState<Record<string, any>>(initValues || {});
   const [modifies, setModifies] = useState<RelationModifies>({});
   const { fields, relations } = useManifest().get({ moduleName, modelName });
@@ -43,6 +44,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
 
   const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
+    setSubmitted(true);
     onSubmit?.(data, modifies);
   };
 
@@ -55,6 +57,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
             onChange={handleChange(field.name)}
             value={data[field.name]}
             field={field}
+            submitted={submitted}
           />
         </FormControl>
       ))}

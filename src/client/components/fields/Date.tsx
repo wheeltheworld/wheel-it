@@ -1,5 +1,5 @@
-import { Box, Flex, Input } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import { Box, Flex, Input } from "@chakra-ui/react";
 import type { IDate } from "../../../shared/IDate";
 
 interface DateProps {
@@ -29,7 +29,7 @@ const Date: React.FC<DateProps> = ({
     };
 
   useEffect(() => {
-    if (!date.day || !date.month || !date.year) {
+    if (!(date.day && date.month && date.year) && isRequired) {
       setError("Please fill the date");
     } else {
       onChange?.(date as IDate);
