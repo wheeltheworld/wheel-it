@@ -3,13 +3,13 @@
   "version": "0.12.4",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/wheeltheworld/wheelIt.git"
+    "url": "git+ssh://git@github.com/wheeltheworld/wheel-it.git"
   },
   "description": "A framework to create CRUD views based on Chakra UI and TypeORM.",
   "bugs": {
-    "url": "https://github.com/wheeltheworld/wheelIt/issues"
+    "url": "https://github.com/wheeltheworld/wheel-it/issues"
   },
-  "homepage": "https://github.com/wheeltheworld/wheelIt#readme",
+  "homepage": "https://github.com/wheeltheworld/wheel-it#readme",
   "keywords": [
     "crud",
     "automatization",
@@ -38,7 +38,7 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "npmjs": "yarn build && yarn publish --access public"
+    "npmjs": "yarn build && yarn publish --no-git-tag-version --access public"
   },
   "devDependencies": {
     "@chakra-ui/react": "^1.8.8",
