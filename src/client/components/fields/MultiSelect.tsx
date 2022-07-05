@@ -31,9 +31,10 @@ const MultiSelect: React.FC<SelectProps> = ({
   useEffect(() => {
     if (!submitted) return;
     if (valueGroup.length === 0 && isRequired) {
-      setError("Please select at least an option");
       setShouldShowError(true);
+      setError("Please select at least an option");
     } else {
+      setShouldShowError(false);
       onChange?.(value);
     }
   }, [valueGroup, submitted]);
