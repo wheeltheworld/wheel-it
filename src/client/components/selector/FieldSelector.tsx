@@ -9,6 +9,7 @@ import MultiSelect from "../fields/MultiSelect";
 interface FieldSelectorProps {
   onChange: (value: any) => void;
   value: any;
+  submitted: boolean;
   field: Field;
 }
 
@@ -16,6 +17,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
   onChange,
   value,
   field,
+  submitted,
 }) => {
   const { customInputs } = useWheel();
   const CustomInput = customInputs?.[field.type];
@@ -69,7 +71,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
     case "select":
       return <Select {...commonProps} />;
     case "multiselect":
-      return <MultiSelect {...commonProps} />;
+      return <MultiSelect {...commonProps} submitted={submitted} />;
     case "string":
     default:
       return (
