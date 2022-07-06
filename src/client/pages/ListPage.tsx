@@ -9,6 +9,8 @@ import {
   Flex,
   Link,
   Input,
+  LinkBox,
+  LinkOverlay,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useHistory } from "react-router-dom";
@@ -59,6 +61,53 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
   listables.sort((a, b) => a.position - b.position);
   indexables.sort((a, b) => a.position - b.position);
 
+  const isRowClickable = !Boolean(
+    indexables.filter((i) => i.indexable && i.isListable).length
+  );
+
+  const rowElements = (item: any, isRowClickable: boolean) =>
+    listables.map((field, i) => {
+      let value = item[field.name];
+      if (field.type === "date") {
+        value = `${value.day}/${value.month}/${value.year}`;
+      }
+      if (field.type === "select") {
+        value = field.options.find((o) => o.value === value)?.label;
+      }
+      if (field.type === "multiselect") {
+        value = value
+          .map((v: string) => field.options.find((o) => o.value === v)?.label)
+          .join(", ");
+      }
+      value = value?.toString();
+      return isRowClickable ? (
+        <Td key={field.name}>
+          {i === 0 ? (
+            <LinkOverlay href={`/_/${moduleName}/${modelName}/id/${item.id}`}>
+              {value}
+            </LinkOverlay>
+          ) : (
+            value
+          )}
+        </Td>
+      ) : (
+        <Td key={field.name}>
+          {indexables.map((f) => f.name).includes(field.name) ? (
+            <Link
+              as={RouterLink}
+              to={`/_/${moduleName}/${modelName}/${field.name}/${
+                item[field.name]
+              }`}
+            >
+              {value}
+            </Link>
+          ) : (
+            value
+          )}
+        </Td>
+      );
+    });
+
   useEffect(() => {
     push(
       `/_/${moduleName}/${modelName}?page=${page}&amount=${amount}&search=${search}`
@@ -90,50 +139,21 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
       <Table mt="20px">
         <Thead>
           <Tr>
-            {listables.map((field) => {
-              return <Th key={field.name}>{field.label || field.name}</Th>;
-            })}
+            {listables.map((field) => (
+              <Th key={field.name}>{field.label || field.name}</Th>
+            ))}
           </Tr>
         </Thead>
         <Tbody>
-          {items?.map((item, i) => (
-            <Tr key={i}>
-              {listables.map((field) => {
-                let value = item[field.name];
-                if (field.type === "date") {
-                  value = `${value.day}/${value.month}/${value.year}`;
-                }
-                if (field.type === "select") {
-                  value = field.options.find((o) => o.value === value)?.label;
-                }
-                if (field.type === "multiselect") {
-                  value = value
-                    .map(
-                      (v: string) =>
-                        field.options.find((o) => o.value === v)?.label
-                    )
-                    .join(", ");
-                }
-                value = value?.toString();
-                return (
-                  <Td key={field.name}>
-                    {indexables.map((f) => f.name).includes(field.name) ? (
-                      <Link
-                        as={RouterLink}
-                        to={`/_/${moduleName}/${modelName}/${field.name}/${
-                          item[field.name]
-                        }`}
-                      >
-                        {value}
-                      </Link>
-                    ) : (
-                      value
-                    )}
-                  </Td>
-                );
-              })}
-            </Tr>
-          ))}
+          {items?.map((item, i) =>
+            isRowClickable ? (
+              <LinkBox as={Tr} key={i}>
+                {rowElements(item, isRowClickable)}
+              </LinkBox>
+            ) : (
+              <Tr key={i}>{rowElements(item, isRowClickable)}</Tr>
+            )
+          )}
         </Tbody>
       </Table>
     </>

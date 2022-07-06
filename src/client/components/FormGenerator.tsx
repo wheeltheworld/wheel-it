@@ -1,5 +1,6 @@
 import React, { FormEventHandler, useEffect, useState } from "react";
 import { Box, Button, FormControl, FormLabel } from "@chakra-ui/react";
+import type { StringOrNumber } from "@chakra-ui/utils";
 import FieldSelector from "./selector/FieldSelector";
 import RelationSwitch from "./selector/RelationSwitch";
 import useManifest from "../utils/hooks/useManifest";
@@ -31,7 +32,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
     onChange?.(data);
   }, [data]);
 
-  const handleChange = (name: string) => (value: any) => {
+  const handleChange = (name: StringOrNumber) => (value: any) => {
     setData((data) => ({ ...data, [name]: value }));
   };
 
