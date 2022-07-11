@@ -9,7 +9,7 @@ import {
   Td,
   Tr,
 } from "@chakra-ui/react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEntity } from "../utils/hooks/useEntity";
 import useManifest from "../utils/hooks/useManifest";
 import { Link as RouterLink } from "react-router-dom";
@@ -34,7 +34,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
     by,
     value,
   });
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { manifest, endpoint, get } = useManifest();
   const { success, error } = useNotification();
 
@@ -59,7 +59,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
         title: "Success",
         description: `${label} deleted successfully`,
       });
-      push(`/_/${moduleName}/${modelName}`);
+      navigate(`/_/${moduleName}/${modelName}`);
     } catch (e) {
       error({
         title: "Error",

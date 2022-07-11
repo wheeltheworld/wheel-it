@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import FormGenerator from "../components/FormGenerator";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useManifest from "../utils/hooks/useManifest";
 import { Button } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
@@ -15,7 +15,7 @@ interface CreatePageProps {
 
 const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
   const { endpoint, manifest, get } = useManifest();
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { success, error } = useNotification();
 
   if (!manifest) {
@@ -40,9 +40,9 @@ const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
         description: `${label} created successfully`,
       });
       if (indexable) {
-        push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
+        navigate(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
       } else {
-        push(`/_/${moduleName}/${modelName}`);
+        navigate(`/_/${moduleName}/${modelName}`);
       }
     } catch (e) {
       error({

@@ -34,8 +34,7 @@ export const useRoutes = (
         <Route
           path={`/_/${m.name}/${model.name}/create`}
           key={`create-${m.name}.${model.name}`}
-          exact
-          component={() =>
+          element={
             wrap(<CreatePage modelName={model.name} moduleName={m.name} />)
           }
         />
@@ -44,8 +43,7 @@ export const useRoutes = (
         <Route
           path={`/_/${m.name}/${model.name}`}
           key={`list-${m.name}.${model.name}`}
-          exact
-          component={() =>
+          element={
             wrap(<ListPage modelName={model.name} moduleName={m.name} />)
           }
         />
@@ -56,8 +54,7 @@ export const useRoutes = (
           <Route
             path={`/_/${m.name}/${model.name}/${indexable.name}/:value`}
             key={`preview-${m.name}.${model.name}.${indexable.name}`}
-            exact
-            component={() =>
+            element={
               wrap(
                 <PreviewPage
                   modelName={model.name}
@@ -72,8 +69,7 @@ export const useRoutes = (
           <Route
             path={`/_/${m.name}/${model.name}/${indexable.name}/:value/edit`}
             key={`edit-${m.name}.${model.name}.${indexable.name}`}
-            exact
-            component={() =>
+            element={
               wrap(
                 <EditPage
                   modelName={model.name}
@@ -93,7 +89,7 @@ export const useRoutes = (
     routes.push(
       <Route
         key="not-found"
-        component={() =>
+        element={
           wrap(
             <div>
               <h1>Not Found</h1>

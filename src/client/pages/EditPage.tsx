@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { Button } from "@chakra-ui/react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import FormGenerator from "../components/FormGenerator";
 import { useEntity } from "../utils/hooks/useEntity";
 import useManifest from "../utils/hooks/useManifest";
@@ -23,7 +23,7 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
     by,
     value,
   });
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { manifest, endpoint, get } = useManifest();
   const { success, error } = useNotification();
 
@@ -54,9 +54,9 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
       });
 
       if (indexable) {
-        push(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
+        navigate(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
       } else {
-        push(`/_/${moduleName}/${modelName}`);
+        navigate(`/_/${moduleName}/${modelName}`);
       }
     } catch (e) {
       error({
@@ -80,7 +80,7 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
         title: "Success",
         description: `${label} deleted successfully`,
       });
-      push(`/_/${moduleName}/${modelName}`);
+      navigate(`/_/${moduleName}/${modelName}`);
     } catch (e) {
       error({
         title: "Error",

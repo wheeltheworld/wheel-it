@@ -13,7 +13,7 @@ import {
   LinkOverlay,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { Link as RouterLink, useHistory } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import type { Field, ManifestRelation } from "../../shared/manifest";
 import Paginator from "../components/Paginator";
 import { useEntities } from "../utils/hooks/useEntities";
@@ -35,7 +35,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
   const [amount, setAmount] = useState(Number(query.get("amount")) || 25);
   const [search, setSearch] = useState(query.get("search") || "");
 
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { items, pages } = useEntities({
     moduleName,
     modelName,
@@ -109,7 +109,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
     });
 
   useEffect(() => {
-    push(
+    navigate(
       `/_/${moduleName}/${modelName}?page=${page}&amount=${amount}&search=${search}`
     );
   }, [page, amount, search]);
