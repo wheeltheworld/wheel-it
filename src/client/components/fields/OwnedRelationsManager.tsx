@@ -20,6 +20,7 @@ import { fieldValueToString } from "../../utils/funcs/fieldValueToString";
 import useManifest from "../../utils/hooks/useManifest";
 import FormGenerator from "../FormGenerator";
 import RelationAdder from "./RelationAdder";
+import type { FieldsAndRels } from "../../pages/ListPage";
 
 interface OwnedRelationsManagerProps {
   moduleName: string;
@@ -39,15 +40,18 @@ const OwnedRelationsManager: React.FC<OwnedRelationsManagerProps> = ({
   relation,
 }) => {
   const [selected, setSelected] = useState(value || []);
-  const { label, fields } = useManifest().get({
+  const [modal, setModal] = useState<boolean>();
+  const [onCreation, setOnCreation] = useState<any>({});
+
+  const manifest = useManifest().get({
     moduleName,
     modelName: childName,
   });
-  const [modal, setModal] = useState<boolean>();
-  const [onCreation, setOnCreation] = useState<any>({});
+
   useEffect(() => {
     onChange(selected, []);
   }, [selected]);
+
   const onClose = () => setModal(undefined);
 
   const handleAdd = (add: any) => {
@@ -69,13 +73,27 @@ const OwnedRelationsManager: React.FC<OwnedRelationsManagerProps> = ({
     setSelected((prev) => prev.filter((_, i) => i !== idx));
   };
 
+  const listableRels: FieldsAndRels = manifest.relations.filter(
+    (f) => f.isListable && !f.isHidden
+  );
+
+  const listables: FieldsAndRels = ([] as FieldsAndRels)
+    .concat(manifest.fields.listables, listableRels)
+    .filter(Boolean);
+
+  listables.sort((a, b) => a.position - b.position);
+
   return (
     <Box>
       <Flex>
-        <Button onClick={() => setModal(false)}>Add {label}</Button>
-        <Button onClick={() => setModal(true)}>Create {label}</Button>
+        <Button marginRight={2} marginTop={2} onClick={() => setModal(false)}>
+          Add {manifest.label}
+        </Button>
+        <Button marginTop={2} onClick={() => setModal(true)}>
+          Create {manifest.label}
+        </Button>
 
-        <Modal isOpen={modal === false} onClose={onClose}>
+        <Modal isOpen={modal === false} onClose={onClose} size="4xl">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
@@ -97,7 +115,7 @@ const OwnedRelationsManager: React.FC<OwnedRelationsManagerProps> = ({
           </ModalContent>
         </Modal>
 
-        <Modal isOpen={modal === true} onClose={onClose}>
+        <Modal isOpen={modal === true} onClose={onClose} size="4xl">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
@@ -127,15 +145,15 @@ const OwnedRelationsManager: React.FC<OwnedRelationsManagerProps> = ({
       <Table>
         <Thead>
           <Tr>
-            {fields.all.map((field) => (
-              <Th key={field.name}>{field.label}</Th>
+            {listables.map((field) => (
+              <Th key={field.name}>{field.label || field.name}</Th>
             ))}
           </Tr>
         </Thead>
         <Tbody>
-          {selected?.map((item, i) => (
+          {selected.map((item, i) => (
             <Tr key={item.id}>
-              {fields.all.map((field) => (
+              {listables.map((field) => (
                 <Th key={field.name}>
                   {fieldValueToString(field, item[field.name])}
                 </Th>

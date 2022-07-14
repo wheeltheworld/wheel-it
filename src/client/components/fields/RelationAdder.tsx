@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import type { ManifestRelation } from "../../../shared/manifest";
+import type { FieldsAndRels } from "../../pages/ListPage";
 import { fieldValueToString } from "../../utils/funcs/fieldValueToString";
 import { useEntities } from "../../utils/hooks/useEntities";
 import useManifest from "../../utils/hooks/useManifest";
@@ -66,6 +67,16 @@ const RelationAdder: React.FC<RelationAdderProps> = ({
     onChange(selected);
   }, [selected]);
 
+  const listableRels: FieldsAndRels = manifest.relations.filter(
+    (f) => f.isListable && !f.isHidden
+  );
+
+  const listables: FieldsAndRels = ([] as FieldsAndRels)
+    .concat(manifest.fields.listables, listableRels)
+    .filter(Boolean);
+    
+  listables.sort((a, b) => a.position - b.position);
+
   return (
     <>
       <Flex justify="flex-end">
@@ -88,7 +99,7 @@ const RelationAdder: React.FC<RelationAdderProps> = ({
       <Table mt="20px">
         <Thead>
           <Tr>
-            {manifest?.fields.listables.map((field) => (
+            {listables.map((field) => (
               <Th key={field.name}>{field.label || field.name}</Th>
             ))}
           </Tr>
@@ -96,7 +107,7 @@ const RelationAdder: React.FC<RelationAdderProps> = ({
         <Tbody>
           {items?.map((item, i) => (
             <Tr key={i}>
-              {manifest?.fields.listables.map((field) => (
+              {listables.map((field) => (
                 <Td key={field.name}>
                   {fieldValueToString(field, item[field.name])}
                 </Td>

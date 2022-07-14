@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import type { ManifestRelation } from "../../../shared/manifest";
+import type { FieldsAndRels } from "../../pages/ListPage";
 import { fieldValueToString } from "../../utils/funcs/fieldValueToString";
 import { useEntities } from "../../utils/hooks/useEntities";
 import useManifest from "../../utils/hooks/useManifest";
@@ -39,9 +40,11 @@ const RelationSelector: React.FC<RelationSelectorProps> = ({
   onChange,
 }) => {
   const manifest = useManifest().get({ moduleName, modelName: childName });
+
   const [selected, setSelected] = useState(value || null);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+
   const { isOpen, onClose, onOpen } = useDisclosure();
   const { items, pages } = useEntities({
     moduleName,
@@ -55,19 +58,29 @@ const RelationSelector: React.FC<RelationSelectorProps> = ({
     onChange(selected);
   }, [selected]);
 
+  const listableRels: FieldsAndRels = manifest.relations.filter(
+    (f) => f.isListable && !f.isHidden
+  );
+
+  const listables: FieldsAndRels = ([] as FieldsAndRels)
+    .concat(manifest.fields.listables, listableRels)
+    .filter(Boolean);
+  
+  listables.sort((a, b) => a.position - b.position);
+
   if (selected) {
     return (
       <Table mt="20px">
         <Thead>
           <Tr>
-            {manifest?.fields.listables.map((field) => (
+            {listables.map((field) => (
               <Th key={field.name}>{field.label || field.name}</Th>
             ))}
           </Tr>
         </Thead>
         <Tbody>
           <Tr>
-            {manifest?.fields.listables.map((field) => (
+            {listables.map((field) => (
               <Td key={field.name}>{fieldValueToString(field, selected)}</Td>
             ))}
             <Td>
@@ -91,7 +104,7 @@ const RelationSelector: React.FC<RelationSelectorProps> = ({
       <Button onClick={onOpen} colorScheme="blue">
         Select
       </Button>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} size="4xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -118,7 +131,7 @@ const RelationSelector: React.FC<RelationSelectorProps> = ({
             <Table mt="20px">
               <Thead>
                 <Tr>
-                  {manifest?.fields.listables.map((field) => (
+                  {listables.map((field) => (
                     <Th key={field.name}>{field.label || field.name}</Th>
                   ))}
                 </Tr>
@@ -126,7 +139,7 @@ const RelationSelector: React.FC<RelationSelectorProps> = ({
               <Tbody>
                 {items?.map((item, i) => (
                   <Tr key={i}>
-                    {manifest?.fields.listables.map((field) => (
+                    {listables.map((field) => (
                       <Td key={field.name}>
                         {fieldValueToString(field, item[field.name])}
                       </Td>

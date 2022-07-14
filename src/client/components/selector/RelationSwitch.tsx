@@ -23,6 +23,7 @@ const Wrapper: React.FC<PropsWithChildren<{ label: string }>> = ({
     border="1px solid lightgray"
     padding="20px"
     my="20px"
+    overflowX="scroll"
   >
     <Text fontSize="20px" fontWeight="bold">
       {label}

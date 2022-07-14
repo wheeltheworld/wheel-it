@@ -53,7 +53,7 @@ const FormGenerator: React.FC<FormGeneratorProps> = ({
     <>
       {fields.all.map((field) => field.showInForm && (
         <FormControl key={field.name}>
-          <FormLabel>{field.label || field.name}</FormLabel>
+          <FormLabel marginTop={2}>{field.label || field.name}</FormLabel>
           <FieldSelector
             onChange={handleChange(field.name)}
             value={data[field.name]}

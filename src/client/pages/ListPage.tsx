@@ -16,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import type { Field, ManifestRelation } from "../../shared/manifest";
 import Paginator from "../components/Paginator";
+import { fieldValueToString } from "../utils/funcs/fieldValueToString";
 import { useEntities } from "../utils/hooks/useEntities";
 import useManifest from "../utils/hooks/useManifest";
 import { useQuery } from "../utils/hooks/useQuery";
@@ -25,7 +26,7 @@ interface ListPageProps {
   modelName: string;
 }
 
-type FieldsAndRels = (Field | ManifestRelation)[];
+export type FieldsAndRels = (Field | ManifestRelation)[];
 
 const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
   const query = useQuery();
@@ -44,18 +45,18 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
     query: search,
   });
 
-  const listableRels: FieldsAndRels = manifest?.relations.filter(
+  const listableRels: FieldsAndRels = manifest.relations.filter(
     (f) => f.isListable && !f.isHidden
   );
-  const indexableRels: FieldsAndRels = manifest?.relations.filter(
+  const indexableRels: FieldsAndRels = manifest.relations.filter(
     (f) => f.indexable
   );
 
   const listables: FieldsAndRels = ([] as FieldsAndRels)
-    .concat(manifest?.fields.listables, listableRels)
+    .concat(manifest.fields.listables, listableRels)
     .filter(Boolean);
   const indexables: FieldsAndRels = ([] as FieldsAndRels)
-    .concat(manifest?.fields.indexables, indexableRels)
+    .concat(manifest.fields.indexables, indexableRels)
     .filter(Boolean);
 
   listables.sort((a, b) => a.position - b.position);
@@ -67,19 +68,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
 
   const rowElements = (item: any, isRowClickable: boolean) =>
     listables.map((field, i) => {
-      let value = item[field.name];
-      if (field.type === "date") {
-        value = `${value.day}/${value.month}/${value.year}`;
-      }
-      if (field.type === "select") {
-        value = field.options.find((o) => o.value === value)?.label;
-      }
-      if (field.type === "multiselect") {
-        value = value
-          .map((v: string) => field.options.find((o) => o.value === v)?.label)
-          .join(", ");
-      }
-      value = value?.toString();
+      const value = fieldValueToString(field, item[field.name])
       return isRowClickable ? (
         <Td key={field.name}>
           {i === 0 ? (
