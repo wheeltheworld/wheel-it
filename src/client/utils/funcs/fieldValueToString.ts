@@ -20,11 +20,11 @@ export const fieldValueToString = (
       value = `${value.day}/${value.month}/${value.year}`;
       break;
     case "select":
-      value = field.options.find((o) => o.value === value)?.label;
+      value = field.options.find((o) => o.value === value)?.value;
       break;
     case "multiselect":
       value = value
-        .map((v: string) => field.options.find((o) => o.value === v)?.label)
+        .map((v: string) => field.options.find((o) => o.value === v)?.value)
         .join(", ");
       break;
     default:

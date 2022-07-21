@@ -21,12 +21,21 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
 }) => {
   const { customInputs } = useWheel();
   const CustomInput = customInputs?.[field.type];
+  const readOnlyProps = field.isReadonly
+    ? {
+        opacity: 0.4,
+        cursor: "default",
+        outline: 0,
+        border: 0,
+      }
+    : {};
   const commonProps = {
     readOnly: field.isReadonly,
     isRequired: field.isRequired,
     value,
     onChange,
     options: field.options,
+    ...readOnlyProps,
   };
   if (CustomInput) {
     return <CustomInput {...commonProps} />;

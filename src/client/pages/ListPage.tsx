@@ -45,6 +45,16 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
     query: search,
   });
 
+  useEffect(() => {
+    navigate(
+      `/_/${moduleName}/${modelName}?page=${page}&amount=${amount}&search=${search}`
+    );
+  }, [page, amount, search]);
+
+  if (!manifest) {
+    return null;
+  }
+
   const listableRels: FieldsAndRels = manifest.relations.filter(
     (f) => f.isListable && !f.isHidden
   );
@@ -68,7 +78,7 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
 
   const rowElements = (item: any, isRowClickable: boolean) =>
     listables.map((field, i) => {
-      const value = fieldValueToString(field, item[field.name])
+      const value = fieldValueToString(field, item[field.name]);
       return isRowClickable ? (
         <Td key={field.name}>
           {i === 0 ? (
@@ -96,12 +106,6 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
         </Td>
       );
     });
-
-  useEffect(() => {
-    navigate(
-      `/_/${moduleName}/${modelName}?page=${page}&amount=${amount}&search=${search}`
-    );
-  }, [page, amount, search]);
 
   return (
     <>

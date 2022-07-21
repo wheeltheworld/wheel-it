@@ -16,11 +16,6 @@ export const listEntity: Controller = async (model, ctx, data) => {
     where: data.query
       ? (model.wheel.manifest.fields.searchables
           .map((f) => {
-            if (f.type === "string") {
-              return {
-                [f.name]: Like(`%${query}%`),
-              };
-            }
             if (
               (f.type === "int" || f.type === "float") &&
               isNaN(Number(query))
@@ -28,7 +23,7 @@ export const listEntity: Controller = async (model, ctx, data) => {
               return undefined;
             }
             return {
-              [f.name]: query,
+              [f.name]: Like(`%${query}%`),
             };
           })
           .filter(Boolean) as FindConditions<CrudModel>)
@@ -43,6 +38,7 @@ export const listEntity: Controller = async (model, ctx, data) => {
     item.hideHiddens();
     return unparseData(item, model.wheel.manifest.fields.all, ctx.unparsers);
   });
+  
   return response({
     items,
     pages: Math.ceil(count / limit),

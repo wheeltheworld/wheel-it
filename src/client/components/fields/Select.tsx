@@ -17,6 +17,14 @@ const Select: React.FC<SelectProps> = ({
   isRequired,
   options,
 }) => {
+  const readOnlyProps = readOnly
+    ? {
+        opacity: 0.4,
+        cursor: "default",
+        outline: 0,
+        border: 0,
+      }
+    : {};
 
   useEffect(() => {
     if (!value) {
@@ -31,6 +39,7 @@ const Select: React.FC<SelectProps> = ({
         onChange={(e) => onChange(e.target.value)}
         isReadOnly={readOnly}
         isRequired={isRequired}
+        {...readOnlyProps}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

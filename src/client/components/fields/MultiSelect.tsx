@@ -20,6 +20,15 @@ const MultiSelect: React.FC<SelectProps> = ({
   options,
   submitted,
 }) => {
+  const readOnlyProps = readOnly
+    ? {
+        opacity: 0.4,
+        cursor: "default",
+        outline: 0,
+        border: 0,
+      }
+    : {};
+
   const [valueGroup, setValueGroup] = useState<StringOrNumber[]>(value || []);
   const [error, setError] = useState<string>("");
   const [blocked, setBlocked] = useState<boolean>(true);
@@ -50,11 +59,9 @@ const MultiSelect: React.FC<SelectProps> = ({
               value={option.value}
               key={option.value}
               readOnly={readOnly}
+              {...readOnlyProps}
             >
-              <Text
-                marginRight={6}
-                marginY={2}
-              >
+              <Text marginRight={6} marginY={2}>
                 {option.label}
               </Text>
             </Checkbox>

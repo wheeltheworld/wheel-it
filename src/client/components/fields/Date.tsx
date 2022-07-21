@@ -15,6 +15,15 @@ const Date: React.FC<DateProps> = ({
   readOnly,
   isRequired,
 }) => {
+  const readOnlyProps = readOnly
+    ? {
+        opacity: 0.4,
+        cursor: "default",
+        outline: 0,
+        border: 0,
+      }
+    : {};
+
   const [date, setDate] = useState<Partial<IDate>>(value || {});
   const [error, setError] = useState<string>("");
   const [shouldShowError, setShouldShowError] = useState(false);
@@ -45,6 +54,7 @@ const Date: React.FC<DateProps> = ({
           width="80px"
           readOnly={readOnly}
           isRequired={isRequired}
+          {...readOnlyProps}
         />
         /
         <Input
@@ -53,6 +63,7 @@ const Date: React.FC<DateProps> = ({
           width="80px"
           readOnly={readOnly}
           isRequired={isRequired}
+          {...readOnlyProps}
         />
         /
         <Input
@@ -61,6 +72,7 @@ const Date: React.FC<DateProps> = ({
           width="80px"
           readOnly={readOnly}
           isRequired={isRequired}
+          {...readOnlyProps}
         />
       </Flex>
       <Box color="lightgray">dd/mm/yyyy</Box>
