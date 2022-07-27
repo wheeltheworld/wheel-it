@@ -15,7 +15,7 @@ type PromiseOrNot<T> = T | Promise<T>;
 
 interface ModuleDeclaration {
   src: string;
-  icon: string;
+  icon?: string;
   label?: string;
   name?: string;
 }
@@ -51,7 +51,7 @@ export declare class CrudModel extends BaseEntity {
 export interface Module {
   name: string;
   label: string;
-  icon: string;
+  icon?: string;
   models: typeof CrudModel[];
 }
 
