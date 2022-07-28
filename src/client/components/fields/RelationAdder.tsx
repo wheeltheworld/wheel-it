@@ -11,8 +11,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import type { ManifestRelation } from "../../../shared/manifest";
-import type { FieldsAndRels } from "../../pages/ListPage";
 import { fieldValueToString } from "../../utils/funcs/fieldValueToString";
+import { getListables } from "../../utils/funcs/listables";
 import { useEntities } from "../../utils/hooks/useEntities";
 import useManifest from "../../utils/hooks/useManifest";
 import Paginator from "../Paginator";
@@ -67,15 +67,7 @@ const RelationAdder: React.FC<RelationAdderProps> = ({
     onChange(selected);
   }, [selected]);
 
-  const listableRels: FieldsAndRels = manifest.relations.filter(
-    (f) => f.isListable && !f.isHidden
-  );
-
-  const listables: FieldsAndRels = ([] as FieldsAndRels)
-    .concat(manifest.fields.listables, listableRels)
-    .filter(Boolean);
-    
-  listables.sort((a, b) => a.position - b.position);
+  const listables = getListables(manifest);
 
   return (
     <>

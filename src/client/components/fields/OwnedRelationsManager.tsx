@@ -20,7 +20,7 @@ import { fieldValueToString } from "../../utils/funcs/fieldValueToString";
 import useManifest from "../../utils/hooks/useManifest";
 import FormGenerator from "../FormGenerator";
 import RelationAdder from "./RelationAdder";
-import type { FieldsAndRels } from "../../pages/ListPage";
+import { getListables } from "../../utils/funcs/listables";
 
 interface OwnedRelationsManagerProps {
   moduleName: string;
@@ -73,23 +73,52 @@ const OwnedRelationsManager: React.FC<OwnedRelationsManagerProps> = ({
     setSelected((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const listableRels: FieldsAndRels = manifest.relations.filter(
-    (f) => f.isListable && !f.isHidden
-  );
-
-  const listables: FieldsAndRels = ([] as FieldsAndRels)
-    .concat(manifest.fields.listables, listableRels)
-    .filter(Boolean);
-
-  listables.sort((a, b) => a.position - b.position);
+  const listables = getListables(manifest);
 
   return (
     <Box>
       <Flex>
-        <Button marginRight={2} marginTop={2} onClick={() => setModal(false)}>
+        <Button
+          marginRight={2}
+          marginTop={2}
+          onClick={() => setModal(false)}
+          rounded="md"
+          display="block"
+          w="fit-content"
+          p="10px 20px"
+          bgColor="transparent"
+          color="#02B2AD"
+          border="1px solid"
+          borderColor="#02B2AD"
+          _hover={{ bgColor: "#D1F1F0" }}
+          _focus={{
+            bgColor: "#D1F1F0",
+            borderColor: "#007187",
+            color: "#007187",
+          }}
+          _disabled={{ bgColor: "#D1F1F0", opacity: 0.5 }}
+        >
           Add {manifest.label}
         </Button>
-        <Button marginTop={2} onClick={() => setModal(true)}>
+        <Button
+          marginTop={2}
+          onClick={() => setModal(true)}
+          rounded="md"
+          display="block"
+          w="fit-content"
+          p="10px 20px"
+          bgColor="transparent"
+          color="#02B2AD"
+          border="1px solid"
+          borderColor="#02B2AD"
+          _hover={{ bgColor: "#D1F1F0" }}
+          _focus={{
+            bgColor: "#D1F1F0",
+            borderColor: "#007187",
+            color: "#007187",
+          }}
+          _disabled={{ bgColor: "#D1F1F0", opacity: 0.5 }}
+        >
           Create {manifest.label}
         </Button>
 

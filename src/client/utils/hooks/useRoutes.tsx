@@ -34,18 +34,26 @@ export const useRoutes = (
         <Route
           path={`/_/${m.name}/${model.name}/create`}
           key={`create-${m.name}.${model.name}`}
-          element={
-            wrap(<CreatePage modelName={model.name} moduleName={m.name} />)
-          }
+          element={wrap(
+            <CreatePage
+              modelName={model.name}
+              modelLabel={model.label}
+              moduleName={m.name}
+            />
+          )}
         />
       );
       const listRoute = (
         <Route
           path={`/_/${m.name}/${model.name}`}
           key={`list-${m.name}.${model.name}`}
-          element={
-            wrap(<ListPage modelName={model.name} moduleName={m.name} />)
-          }
+          element={wrap(
+            <ListPage
+              modelName={model.name}
+              modelLabel={model.label}
+              moduleName={m.name}
+            />
+          )}
         />
       );
       routes.push(createRoute, listRoute);
@@ -54,30 +62,28 @@ export const useRoutes = (
           <Route
             path={`/_/${m.name}/${model.name}/${indexable.name}/:value`}
             key={`preview-${m.name}.${model.name}.${indexable.name}`}
-            element={
-              wrap(
-                <PreviewPage
-                  modelName={model.name}
-                  moduleName={m.name}
-                  by={indexable.name}
-                />
-              )
-            }
+            element={wrap(
+              <PreviewPage
+                modelName={model.name}
+                modelLabel={model.label}
+                moduleName={m.name}
+                by={indexable.name}
+              />
+            )}
           />
         );
         const editRoute = (
           <Route
             path={`/_/${m.name}/${model.name}/${indexable.name}/:value/edit`}
             key={`edit-${m.name}.${model.name}.${indexable.name}`}
-            element={
-              wrap(
-                <EditPage
-                  modelName={model.name}
-                  moduleName={m.name}
-                  by={indexable.name}
-                />
-              )
-            }
+            element={wrap(
+              <EditPage
+                modelName={model.name}
+                modelLabel={model.label}
+                moduleName={m.name}
+                by={indexable.name}
+              />
+            )}
           />
         );
         routes.push(editRoute, previewRoute);
@@ -89,13 +95,11 @@ export const useRoutes = (
     routes.push(
       <Route
         key="not-found"
-        element={
-          wrap(
-            <div>
-              <h1>Not Found</h1>
-            </div>
-          )
-        }
+        element={wrap(
+          <div>
+            <h1>Not Found</h1>
+          </div>
+        )}
       />
     );
   }

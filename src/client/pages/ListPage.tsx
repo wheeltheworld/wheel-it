@@ -5,12 +5,15 @@ import {
   Th,
   Thead,
   Tr,
-  Button,
   Flex,
   Link,
   Input,
   LinkBox,
   LinkOverlay,
+  Heading,
+  Box,
+  InputLeftElement,
+  InputGroup,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
@@ -20,15 +23,22 @@ import { fieldValueToString } from "../utils/funcs/fieldValueToString";
 import { useEntities } from "../utils/hooks/useEntities";
 import useManifest from "../utils/hooks/useManifest";
 import { useQuery } from "../utils/hooks/useQuery";
+import { FilterIcon, MoreIcon, SearchIcon } from "wtw-icons/icons";
+import { getIndexables, getListables } from "../utils/funcs/listables";
 
 interface ListPageProps {
   moduleName: string;
   modelName: string;
+  modelLabel: string;
 }
 
 export type FieldsAndRels = (Field | ManifestRelation)[];
 
-const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
+const ListPage: React.FC<ListPageProps> = ({
+  moduleName,
+  modelName,
+  modelLabel,
+}) => {
   const query = useQuery();
   const manifest = useManifest().get({ moduleName, modelName });
 
@@ -55,22 +65,8 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
     return null;
   }
 
-  const listableRels: FieldsAndRels = manifest.relations.filter(
-    (f) => f.isListable && !f.isHidden
-  );
-  const indexableRels: FieldsAndRels = manifest.relations.filter(
-    (f) => f.indexable
-  );
-
-  const listables: FieldsAndRels = ([] as FieldsAndRels)
-    .concat(manifest.fields.listables, listableRels)
-    .filter(Boolean);
-  const indexables: FieldsAndRels = ([] as FieldsAndRels)
-    .concat(manifest.fields.indexables, indexableRels)
-    .filter(Boolean);
-
-  listables.sort((a, b) => a.position - b.position);
-  indexables.sort((a, b) => a.position - b.position);
+  const listables = getListables(manifest);
+  const indexables = getIndexables(manifest);
 
   const isRowClickable = !Boolean(
     indexables.filter((i) => i.indexable && i.isListable).length
@@ -110,24 +106,71 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
   return (
     <>
       <Flex justify="space-between">
-        <Button as={RouterLink} to={`/_/${moduleName}/${modelName}/create`}>
-          Create {modelName}
-        </Button>
-        <Input
-          onChange={(e) => {
-            setSearch(e.target.value);
+        <Heading>{modelLabel}</Heading>
+        <InputGroup maxW="300px">
+          <InputLeftElement
+            pointerEvents="none"
+            children={<Box as={SearchIcon} boxSize="20px" display="block" />}
+          />
+          <Input
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            value={search}
+            rounded="3xl"
+            borderColor="#949494"
+            _disabled={{ borderColor: "#E5E5E5" }}
+            _hover={{ borderColor: "#575757" }}
+            _focus={{
+              borderColor: "#575757",
+              boxShadow: "0 0 0 1px #575757",
+            }}
+          />
+        </InputGroup>
+      </Flex>
+      <Flex justify="space-between" marginTop={6}>
+        <Link
+          as={RouterLink}
+          to={`/_/${moduleName}/${modelName}/create`}
+          bgColor="#02B2AD"
+          color="white"
+          p="10px 20px"
+          rounded="md"
+          _hover={{ bgColor: "#007187" }}
+          display="block"
+        >
+          <Flex align="center" sx={{ gap: "10px" }}>
+            Create {modelName}
+            <Box as={MoreIcon} boxSize="24px" display="block" />
+          </Flex>
+        </Link>
+        <Link
+          as={RouterLink}
+          to=""
+          rounded="md"
+          display="block"
+          w="fit-content"
+          p="10px 20px"
+          bgColor="transparent"
+          color="#02B2AD"
+          border="1px solid"
+          borderColor="#02B2AD"
+          _hover={{ bgColor: "#D1F1F0" }}
+          _focus={{
+            bgColor: "#D1F1F0",
+            borderColor: "#007187",
+            color: "#007187",
           }}
-          value={search}
-          maxW="300px"
-        />
-        <Paginator
-          page={page}
-          pages={pages || 1}
-          onChange={({ number, amount }) => {
-            setAmount(amount);
-            setPage(number);
+          _disabled={{
+            bgColor: "#D1F1F0",
+            opacity: 0.5,
           }}
-        />
+        >
+          <Flex align="center" sx={{ gap: "10px" }}>
+            <Box as={FilterIcon} boxSize="24px" display="block" />
+            Filters
+          </Flex>
+        </Link>
       </Flex>
       <Table mt="20px">
         <Thead>
@@ -149,6 +192,16 @@ const ListPage: React.FC<ListPageProps> = ({ moduleName, modelName }) => {
           )}
         </Tbody>
       </Table>
+      <Flex justify="center" marginTop={6}>
+        <Paginator
+          page={page}
+          pages={pages || 1}
+          onChange={({ number, amount }) => {
+            setAmount(amount);
+            setPage(number);
+          }}
+        />
+      </Flex>
     </>
   );
 };

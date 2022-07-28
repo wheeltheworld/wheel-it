@@ -25,6 +25,15 @@ const Select: React.FC<SelectProps> = ({
         border: 0,
       }
     : {};
+  const inputCommonProps = {
+    borderColor: "#949494",
+    _disabled: { borderColor: "#E5E5E5" },
+    _hover: { borderColor: "#575757" },
+    _focus: {
+      borderColor: "#575757",
+      boxShadow: "0 0 0 1px #575757",
+    },
+  };
 
   useEffect(() => {
     if (!value) {
@@ -40,6 +49,7 @@ const Select: React.FC<SelectProps> = ({
         isReadOnly={readOnly}
         isRequired={isRequired}
         {...readOnlyProps}
+        {...inputCommonProps}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

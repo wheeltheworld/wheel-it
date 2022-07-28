@@ -23,6 +23,15 @@ const Date: React.FC<DateProps> = ({
         border: 0,
       }
     : {};
+  const inputCommonProps = {
+    borderColor: "#949494",
+    _disabled: { borderColor: "#E5E5E5" },
+    _hover: { borderColor: "#575757" },
+    _focus: {
+      borderColor: "#575757",
+      boxShadow: "0 0 0 1px #575757",
+    },
+  };
 
   const [date, setDate] = useState<Partial<IDate>>(value || {});
   const [error, setError] = useState<string>("");
@@ -55,6 +64,7 @@ const Date: React.FC<DateProps> = ({
           readOnly={readOnly}
           isRequired={isRequired}
           {...readOnlyProps}
+          {...inputCommonProps}
         />
         /
         <Input
@@ -64,6 +74,7 @@ const Date: React.FC<DateProps> = ({
           readOnly={readOnly}
           isRequired={isRequired}
           {...readOnlyProps}
+          {...inputCommonProps}
         />
         /
         <Input
@@ -73,6 +84,7 @@ const Date: React.FC<DateProps> = ({
           readOnly={readOnly}
           isRequired={isRequired}
           {...readOnlyProps}
+          {...inputCommonProps}
         />
       </Flex>
       <Box color="lightgray">dd/mm/yyyy</Box>

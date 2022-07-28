@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { Button } from "@chakra-ui/react";
+import { Button, Flex, Heading } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import FormGenerator from "../components/FormGenerator";
 import { useEntity } from "../utils/hooks/useEntity";
@@ -12,10 +12,16 @@ import { cleanData, RelationModifies } from "../utils/funcs/cleanData";
 interface EditPageProps {
   moduleName: string;
   modelName: string;
+  modelLabel: string;
   by: string;
 }
 
-const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
+const EditPage: React.FC<EditPageProps> = ({
+  moduleName,
+  modelName,
+  modelLabel,
+  by,
+}) => {
   const { value } = useParams<{ value: string }>();
   const entity = useEntity({
     moduleName,
@@ -54,7 +60,9 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
       });
 
       if (indexable) {
-        navigate(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
+        navigate(
+          `/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`
+        );
       } else {
         navigate(`/_/${moduleName}/${modelName}`);
       }
@@ -95,21 +103,40 @@ const EditPage: React.FC<EditPageProps> = ({ moduleName, modelName, by }) => {
 
   return (
     <>
-      <Button
-        as={RouterLink}
-        to={`/_/${moduleName}/${modelName}/${by}/${entity[by]}`}
-      >
-        Go Back
-      </Button>
-      <Button colorScheme="red" onClick={handleDelete}>
-        Delete
-      </Button>
+      <Heading>Edit {modelLabel}</Heading>
       <FormGenerator
         onSubmit={handleSubmit}
         initValues={entity}
         modelName={modelName}
         moduleName={moduleName}
       />
+      <Flex justify="flex-end" marginTop={-10}>
+        <Button
+          as={RouterLink}
+          to={`/_/${moduleName}/${modelName}/${by}/${entity[by]}`}
+          marginRight={6}
+          rounded="md"
+          display="block"
+          w="fit-content"
+          p="10px 20px"
+          bgColor="transparent"
+          color="#02B2AD"
+          border="1px solid"
+          borderColor="#02B2AD"
+          _hover={{ bgColor: "#D1F1F0" }}
+          _focus={{
+            bgColor: "#D1F1F0",
+            borderColor: "#007187",
+            color: "#007187",
+          }}
+          _disabled={{ bgColor: "#D1F1F0", opacity: 0.5 }}
+        >
+          Go Back
+        </Button>
+        <Button colorScheme="red" onClick={handleDelete}>
+          Delete
+        </Button>
+      </Flex>
     </>
   );
 };

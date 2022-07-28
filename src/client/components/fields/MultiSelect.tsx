@@ -60,6 +60,12 @@ const MultiSelect: React.FC<SelectProps> = ({
               key={option.value}
               readOnly={readOnly}
               {...readOnlyProps}
+              sx={{
+                  'span.chakra-checkbox__control[data-checked]': {
+                      backgroundColor: '#02B2AD',
+                      borderColor: '#02B2AD',
+                  },
+              }}
             >
               <Text marginRight={6} marginY={2}>
                 {option.label}

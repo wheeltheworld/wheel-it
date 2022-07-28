@@ -29,6 +29,15 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
         border: 0,
       }
     : {};
+  const inputCommonProps = {
+    borderColor: "#949494",
+    _disabled: { borderColor: "#E5E5E5" },
+    _hover: { borderColor: "#575757" },
+    _focus: {
+      borderColor: "#575757",
+      boxShadow: "0 0 0 1px #575757",
+    },
+  };
   const commonProps = {
     readOnly: field.isReadonly,
     isRequired: field.isRequired,
@@ -47,6 +56,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
           type="number"
           step={1}
           {...commonProps}
+          {...inputCommonProps}
           onChange={(e) =>
             e.target.value ? onChange(Number(e.target.value)) : onChange(null)
           }
@@ -58,6 +68,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
           type="number"
           step={0.1}
           {...commonProps}
+          {...inputCommonProps}
           onChange={(e) =>
             e.target.value ? onChange(Number(e.target.value)) : onChange(null)
           }
@@ -68,6 +79,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
         <Input
           type="email"
           {...commonProps}
+          {...inputCommonProps}
           onChange={(e) => onChange(e.target.value)}
         />
       );
@@ -84,7 +96,11 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
     case "string":
     default:
       return (
-        <Input {...commonProps} onChange={(e) => onChange(e.target.value)} />
+        <Input
+          {...commonProps}
+          {...inputCommonProps}
+          onChange={(e) => onChange(e.target.value)}
+        />
       );
   }
 };

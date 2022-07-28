@@ -18,16 +18,19 @@ import { useNotification } from "../utils/hooks/useNotification";
 import { fieldValueToString } from "../utils/funcs/fieldValueToString";
 import type { FieldsAndRels } from "./ListPage";
 import type { ManifestRelation } from "../../shared/manifest";
+import { getPreviewables } from "../utils/funcs/listables";
 
 interface PreviewPageProps {
   moduleName: string;
   modelName: string;
+  modelLabel: string;
   by: string;
 }
 
 const PreviewPage: React.FC<PreviewPageProps> = ({
   moduleName,
   modelName,
+  modelLabel,
   by,
 }) => {
   const { value } = useParams<{ value: string }>();
@@ -74,28 +77,11 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
     return null;
   }
 
-  const previewableRels: FieldsAndRels = model.relations.filter(
-    (f) => f.isPreviewable && !f.isHidden
-  );
-
-  const previewables: FieldsAndRels = ([] as FieldsAndRels)
-    .concat(model.fields.previewables, previewableRels)
-    .filter(Boolean);
-
-  previewables.sort((a, b) => a.position - b.position);
+  const previewables = getPreviewables(model);
 
   return (
     <>
-      <Button
-        as={RouterLink}
-        to={`/_/${moduleName}/${modelName}/`}
-        variant="ghost"
-      >
-        Go Back
-      </Button>
-      <Heading as="h2" size="md" margin={4} textTransform="capitalize">
-        {modelName}
-      </Heading>
+      <Heading>Preview {modelLabel}</Heading>
       <TableContainer whiteSpace="unset">
         <Table size="sm" variant="unstyled">
           <Tbody>
@@ -168,19 +154,46 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
           </Tbody>
         </Table>
       </TableContainer>
-
-      <Flex>
+      <Flex marginTop={8}>
         <Button
           as={RouterLink}
-          colorScheme="blue"
           to={`/_/${moduleName}/${modelName}/${by}/${value}/edit`}
-          marginRight={2}
-          marginTop={2}
+          marginRight={6}
+          rounded="md"
+          display="block"
+          w="fit-content"
+          p="10px 20px"
+          bgColor="#02B2AD"
+          color="white"
+          _hover={{ bgColor: "#007187" }}
+          _focus={{ bgColor: "#004D5C" }}
+          _disabled={{ bgColor: "#02B2AD", opacity: 0.5 }}
         >
           Edit
         </Button>
-        <Button marginTop={2} colorScheme="red" onClick={handleDelete}>
+        <Button colorScheme="red" onClick={handleDelete}>
           Delete
+        </Button>
+        <Button
+          as={RouterLink}
+          to={`/_/${moduleName}/${modelName}/`}
+          rounded="md"
+          display="block"
+          w="fit-content"
+          p="10px 20px"
+          bgColor="transparent"
+          color="#02B2AD"
+          border="1px solid"
+          borderColor="#02B2AD"
+          _hover={{ bgColor: "#D1F1F0" }}
+          _focus={{
+            bgColor: "#D1F1F0",
+            borderColor: "#007187",
+            color: "#007187",
+          }}
+          _disabled={{ bgColor: "#D1F1F0", opacity: 0.5 }}
+        >
+          Go back
         </Button>
       </Flex>
     </>

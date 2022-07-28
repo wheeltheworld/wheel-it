@@ -3,17 +3,21 @@ import axios from "axios";
 import FormGenerator from "../components/FormGenerator";
 import { useNavigate } from "react-router-dom";
 import useManifest from "../utils/hooks/useManifest";
-import { Button } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
 import { useNotification } from "../utils/hooks/useNotification";
 import { cleanData, RelationModifies } from "../utils/funcs/cleanData";
+import { Heading } from "@chakra-ui/react";
 
 interface CreatePageProps {
   moduleName: string;
   modelName: string;
+  modelLabel: string;
 }
 
-const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
+const CreatePage: React.FC<CreatePageProps> = ({
+  moduleName,
+  modelName,
+  modelLabel,
+}) => {
   const { endpoint, manifest, get } = useManifest();
   const navigate = useNavigate();
   const { success, error } = useNotification();
@@ -40,7 +44,9 @@ const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
         description: `${label} created successfully`,
       });
       if (indexable) {
-        navigate(`/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`);
+        navigate(
+          `/_/${moduleName}/${modelName}/${indexable}/${ent[indexable]}`
+        );
       } else {
         navigate(`/_/${moduleName}/${modelName}`);
       }
@@ -54,9 +60,7 @@ const CreatePage: React.FC<CreatePageProps> = ({ moduleName, modelName }) => {
 
   return (
     <>
-      <Button as={RouterLink} to={`/_/${moduleName}/${modelName}`}>
-        Go Back
-      </Button>
+      <Heading>Create {modelLabel}</Heading>
       <FormGenerator
         onSubmit={handleSubmit}
         moduleName={moduleName}

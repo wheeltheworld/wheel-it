@@ -1,4 +1,5 @@
-import resolve from "@rollup/plugin-node-resolve";
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import tsb from "rollup-plugin-ts";
 
 import pkg from "./package.json";
@@ -25,6 +26,7 @@ const bundle = ({ name, path }) => ({
   ],
   plugins: [
     tsb(),
+    commonjs(),
     resolve(),
   ],
 });
