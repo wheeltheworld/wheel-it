@@ -5,6 +5,10 @@ import { useWheel } from "../WheelProvider";
 import Date from "../fields/Date";
 import Select from "../fields/Select";
 import MultiSelect from "../fields/MultiSelect";
+import {
+  readOnlyCommonProps,
+  inputCommonProps,
+} from "../../utils/funcs/styles";
 
 interface FieldSelectorProps {
   onChange: (value: any) => void;
@@ -21,12 +25,14 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
 }) => {
   const { customInputs } = useWheel();
   const CustomInput = customInputs?.[field.type];
+  const readOnlyProps = field.isReadonly ? readOnlyCommonProps : {};
   const commonProps = {
     readOnly: field.isReadonly,
     isRequired: field.isRequired,
     value,
     onChange,
     options: field.options,
+    ...readOnlyProps,
   };
   if (CustomInput) {
     return <CustomInput {...commonProps} />;
@@ -38,6 +44,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
           type="number"
           step={1}
           {...commonProps}
+          {...inputCommonProps}
           onChange={(e) =>
             e.target.value ? onChange(Number(e.target.value)) : onChange(null)
           }
@@ -49,6 +56,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
           type="number"
           step={0.1}
           {...commonProps}
+          {...inputCommonProps}
           onChange={(e) =>
             e.target.value ? onChange(Number(e.target.value)) : onChange(null)
           }
@@ -59,6 +67,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
         <Input
           type="email"
           {...commonProps}
+          {...inputCommonProps}
           onChange={(e) => onChange(e.target.value)}
         />
       );
@@ -75,7 +84,11 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
     case "string":
     default:
       return (
-        <Input {...commonProps} onChange={(e) => onChange(e.target.value)} />
+        <Input
+          {...commonProps}
+          {...inputCommonProps}
+          onChange={(e) => onChange(e.target.value)}
+        />
       );
   }
 };

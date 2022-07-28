@@ -1,6 +1,10 @@
 import React, { useEffect } from "react";
 import { Select as ChakraSelect } from "@chakra-ui/react";
 import type { Option } from "../../../shared/manifest";
+import {
+  inputCommonProps,
+  readOnlyCommonProps,
+} from "../../utils/funcs/styles";
 
 interface SelectProps {
   value: string;
@@ -17,6 +21,7 @@ const Select: React.FC<SelectProps> = ({
   isRequired,
   options,
 }) => {
+  const readOnlyProps = readOnly ? readOnlyCommonProps : {};
 
   useEffect(() => {
     if (!value) {
@@ -31,6 +36,8 @@ const Select: React.FC<SelectProps> = ({
         onChange={(e) => onChange(e.target.value)}
         isReadOnly={readOnly}
         isRequired={isRequired}
+        {...readOnlyProps}
+        {...inputCommonProps}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

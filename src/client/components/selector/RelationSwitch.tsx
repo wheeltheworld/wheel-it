@@ -1,6 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import React, { PropsWithChildren } from "react";
 import type { ManifestRelation } from "../../../shared/manifest";
+import { VTSType } from "../../utils/funcs/fieldValueToString";
 import OwnedRelationsManager from "../fields/OwnedRelationsManager";
 import RelationOwner from "../fields/RelationOwner";
 import RelationSelector from "../fields/RelationSelector";
@@ -23,6 +24,7 @@ const Wrapper: React.FC<PropsWithChildren<{ label: string }>> = ({
     border="1px solid lightgray"
     padding="20px"
     my="20px"
+    overflowX="scroll"
   >
     <Text fontSize="20px" fontWeight="bold">
       {label}
@@ -34,20 +36,20 @@ const Wrapper: React.FC<PropsWithChildren<{ label: string }>> = ({
 const RelationSwitch: React.FC<RelationSelectorProps> = (props) => {
   const { relation } = props;
   switch (relation.type) {
-    case "relatesToOne":
+    case VTSType.RelatesToOne:
       return (
         <Wrapper label={relation.label}>
           <RelationSelector {...props} />
         </Wrapper>
       );
-    case "relatesToMany":
-    case "ownsMany":
+    case VTSType.RelatesToMany:
+    case VTSType.OwnsMany:
       return (
         <Wrapper label={relation.label}>
           <OwnedRelationsManager {...props} />
         </Wrapper>
       );
-    case "ownsOne":
+    case VTSType.OwnsOne:
       return (
         <Wrapper label={relation.label}>
           <RelationOwner {...props} />

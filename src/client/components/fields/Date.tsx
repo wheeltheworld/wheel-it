@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Box, Flex, Input } from "@chakra-ui/react";
 import type { IDate } from "../../../shared/IDate";
+import {
+  inputCommonProps,
+  readOnlyCommonProps,
+} from "../../utils/funcs/styles";
 
 interface DateProps {
   value: IDate;
@@ -15,6 +19,8 @@ const Date: React.FC<DateProps> = ({
   readOnly,
   isRequired,
 }) => {
+  const readOnlyProps = readOnly ? readOnlyCommonProps : {};
+
   const [date, setDate] = useState<Partial<IDate>>(value || {});
   const [error, setError] = useState<string>("");
   const [shouldShowError, setShouldShowError] = useState(false);
@@ -45,6 +51,8 @@ const Date: React.FC<DateProps> = ({
           width="80px"
           readOnly={readOnly}
           isRequired={isRequired}
+          {...readOnlyProps}
+          {...inputCommonProps}
         />
         /
         <Input
@@ -53,6 +61,8 @@ const Date: React.FC<DateProps> = ({
           width="80px"
           readOnly={readOnly}
           isRequired={isRequired}
+          {...readOnlyProps}
+          {...inputCommonProps}
         />
         /
         <Input
@@ -61,6 +71,8 @@ const Date: React.FC<DateProps> = ({
           width="80px"
           readOnly={readOnly}
           isRequired={isRequired}
+          {...readOnlyProps}
+          {...inputCommonProps}
         />
       </Flex>
       <Box color="lightgray">dd/mm/yyyy</Box>

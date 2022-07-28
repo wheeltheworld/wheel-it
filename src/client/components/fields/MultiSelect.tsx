@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Box, Checkbox, CheckboxGroup, Stack } from "@chakra-ui/react";
+import { Box, Checkbox, CheckboxGroup, Stack, Text } from "@chakra-ui/react";
 import type { StringOrNumber } from "@chakra-ui/utils";
 import type { Option } from "../../../shared/manifest";
+import { readOnlyCommonProps } from "../../utils/funcs/styles";
 
 interface SelectProps {
   value: string[];
@@ -20,6 +21,8 @@ const MultiSelect: React.FC<SelectProps> = ({
   options,
   submitted,
 }) => {
+  const readOnlyProps = readOnly ? readOnlyCommonProps : {};
+
   const [valueGroup, setValueGroup] = useState<StringOrNumber[]>(value || []);
   const [error, setError] = useState<string>("");
   const [blocked, setBlocked] = useState<boolean>(true);
@@ -31,7 +34,7 @@ const MultiSelect: React.FC<SelectProps> = ({
   };
 
   useEffect(() => {
-    if (blocked) return;
+    if (blocked && !submitted) return;
     if (valueGroup.length === 0 && isRequired) {
       setShouldShowError(true);
       setError("Please select at least an option");
@@ -44,14 +47,23 @@ const MultiSelect: React.FC<SelectProps> = ({
   return (
     <>
       <CheckboxGroup colorScheme="blue" value={value} onChange={handleChange}>
-        <Stack spacing={[1, 5]} direction={["column", "row"]}>
+        <Stack spacing={[1, 0]} direction={["column", "row"]} wrap="wrap">
           {options.map((option) => (
             <Checkbox
               value={option.value}
               key={option.value}
               readOnly={readOnly}
+              {...readOnlyProps}
+              sx={{
+                "span.chakra-checkbox__control[data-checked]": {
+                  backgroundColor: "#02B2AD",
+                  borderColor: "#02B2AD",
+                },
+              }}
             >
-              {option.label}
+              <Text marginRight={6} marginY={2}>
+                {option.label}
+              </Text>
             </Checkbox>
           ))}
         </Stack>
