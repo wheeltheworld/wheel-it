@@ -110,7 +110,7 @@ const EditPage: React.FC<EditPageProps> = ({
         modelName={modelName}
         moduleName={moduleName}
       />
-      <Flex justify="flex-end" marginTop={-10}>
+      <Flex justify="flex-end" marginTop={-10} width="500px">
         <Button
           as={RouterLink}
           to={`/_/${moduleName}/${modelName}/${by}/${entity[by]}`}

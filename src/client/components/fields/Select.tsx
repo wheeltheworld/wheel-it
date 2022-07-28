@@ -1,6 +1,10 @@
 import React, { useEffect } from "react";
 import { Select as ChakraSelect } from "@chakra-ui/react";
 import type { Option } from "../../../shared/manifest";
+import {
+  inputCommonProps,
+  readOnlyCommonProps,
+} from "../../utils/funcs/styles";
 
 interface SelectProps {
   value: string;
@@ -17,23 +21,7 @@ const Select: React.FC<SelectProps> = ({
   isRequired,
   options,
 }) => {
-  const readOnlyProps = readOnly
-    ? {
-        opacity: 0.4,
-        cursor: "default",
-        outline: 0,
-        border: 0,
-      }
-    : {};
-  const inputCommonProps = {
-    borderColor: "#949494",
-    _disabled: { borderColor: "#E5E5E5" },
-    _hover: { borderColor: "#575757" },
-    _focus: {
-      borderColor: "#575757",
-      boxShadow: "0 0 0 1px #575757",
-    },
-  };
+  const readOnlyProps = readOnly ? readOnlyCommonProps : {};
 
   useEffect(() => {
     if (!value) {

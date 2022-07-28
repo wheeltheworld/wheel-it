@@ -4,6 +4,7 @@ import { isNullOrUndefined } from "../utils/isNullOrUndefined";
 import { isTypeCorrect } from "../utils/isTypeCorrect";
 import { Controller, response } from "../utils/controller";
 import { updateEntity } from "./updateEntity";
+import { VTSType } from "../../client/utils/funcs/fieldValueToString";
 
 export const createEntity: Controller = async (model, ctx, data) => {
   const entity = model.create();
@@ -30,7 +31,7 @@ export const createEntity: Controller = async (model, ctx, data) => {
     const relationModel = relation.target();
     const relationData = data[relation.name];
     switch (relation.type) {
-      case "relatesToOne":
+      case VTSType.RelatesToOne:
         if (relationData === undefined) continue;
         if (relationData === null) {
           // @ts-ignore
@@ -55,7 +56,7 @@ export const createEntity: Controller = async (model, ctx, data) => {
         // @ts-ignore
         entity[relation.name as keyof CrudModel] = relationEntity;
         break;
-      case "ownsOne":
+      case VTSType.OwnsOne:
         if (!entity[relation.name as keyof CrudModel]) {
           const created = await createEntity(relationModel, ctx, relationData);
           entity[relation.name as keyof CrudModel] = created.body;
@@ -69,8 +70,8 @@ export const createEntity: Controller = async (model, ctx, data) => {
         );
         entity[relation.name as keyof CrudModel] = res.body;
         break;
-      case "relatesToMany":
-      case "ownsMany":
+      case VTSType.RelatesToMany:
+      case VTSType.OwnsMany:
         const savedRels = [];
         if (relationData === undefined) continue;
         for (const rel of relationData) {

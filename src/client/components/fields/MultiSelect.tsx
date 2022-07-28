@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Checkbox, CheckboxGroup, Stack, Text } from "@chakra-ui/react";
 import type { StringOrNumber } from "@chakra-ui/utils";
 import type { Option } from "../../../shared/manifest";
+import { readOnlyCommonProps } from "../../utils/funcs/styles";
 
 interface SelectProps {
   value: string[];
@@ -20,14 +21,7 @@ const MultiSelect: React.FC<SelectProps> = ({
   options,
   submitted,
 }) => {
-  const readOnlyProps = readOnly
-    ? {
-        opacity: 0.4,
-        cursor: "default",
-        outline: 0,
-        border: 0,
-      }
-    : {};
+  const readOnlyProps = readOnly ? readOnlyCommonProps : {};
 
   const [valueGroup, setValueGroup] = useState<StringOrNumber[]>(value || []);
   const [error, setError] = useState<string>("");
@@ -61,10 +55,10 @@ const MultiSelect: React.FC<SelectProps> = ({
               readOnly={readOnly}
               {...readOnlyProps}
               sx={{
-                  'span.chakra-checkbox__control[data-checked]': {
-                      backgroundColor: '#02B2AD',
-                      borderColor: '#02B2AD',
-                  },
+                "span.chakra-checkbox__control[data-checked]": {
+                  backgroundColor: "#02B2AD",
+                  borderColor: "#02B2AD",
+                },
               }}
             >
               <Text marginRight={6} marginY={2}>

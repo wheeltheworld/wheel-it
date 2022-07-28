@@ -5,6 +5,10 @@ import { useWheel } from "../WheelProvider";
 import Date from "../fields/Date";
 import Select from "../fields/Select";
 import MultiSelect from "../fields/MultiSelect";
+import {
+  readOnlyCommonProps,
+  inputCommonProps,
+} from "../../utils/funcs/styles";
 
 interface FieldSelectorProps {
   onChange: (value: any) => void;
@@ -21,23 +25,7 @@ const FieldSelector: React.FC<FieldSelectorProps> = ({
 }) => {
   const { customInputs } = useWheel();
   const CustomInput = customInputs?.[field.type];
-  const readOnlyProps = field.isReadonly
-    ? {
-        opacity: 0.4,
-        cursor: "default",
-        outline: 0,
-        border: 0,
-      }
-    : {};
-  const inputCommonProps = {
-    borderColor: "#949494",
-    _disabled: { borderColor: "#E5E5E5" },
-    _hover: { borderColor: "#575757" },
-    _focus: {
-      borderColor: "#575757",
-      boxShadow: "0 0 0 1px #575757",
-    },
-  };
+  const readOnlyProps = field.isReadonly ? readOnlyCommonProps : {};
   const commonProps = {
     readOnly: field.isReadonly,
     isRequired: field.isRequired,

@@ -82,7 +82,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
   return (
     <>
       <Heading>Preview {modelLabel}</Heading>
-      <TableContainer whiteSpace="unset">
+      <TableContainer whiteSpace="unset" width="500px">
         <Table size="sm" variant="unstyled">
           <Tbody>
             {previewables.map((field, i) => (
@@ -158,7 +158,6 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
         <Button
           as={RouterLink}
           to={`/_/${moduleName}/${modelName}/${by}/${value}/edit`}
-          marginRight={6}
           rounded="md"
           display="block"
           w="fit-content"
@@ -171,12 +170,12 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
         >
           Edit
         </Button>
-        <Button colorScheme="red" onClick={handleDelete}>
-          Delete
-        </Button>
+      </Flex>
+      <Flex justify="flex-end" marginTop={-10} width="500px">
         <Button
           as={RouterLink}
           to={`/_/${moduleName}/${modelName}/`}
+          marginRight={6}
           rounded="md"
           display="block"
           w="fit-content"
@@ -194,6 +193,9 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
           _disabled={{ bgColor: "#D1F1F0", opacity: 0.5 }}
         >
           Go back
+        </Button>
+        <Button colorScheme="red" onClick={handleDelete}>
+          Delete
         </Button>
       </Flex>
     </>
