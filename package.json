@@ -38,7 +38,8 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "npmjs": "yarn build && yarn publish --access public"
+    "npmjs": "yarn build && yarn publish --no-git-tag-version --access public",
+    "prepare": "rollup -c"
   },
   "devDependencies": {
     "@chakra-ui/react": "^1.8.8",
