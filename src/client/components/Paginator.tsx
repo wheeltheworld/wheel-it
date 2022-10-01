@@ -1,6 +1,7 @@
 import { Button, Flex, Select, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { range } from "../utils/funcs/range";
+import { inputCommonProps } from "../utils/funcs/styles";
 
 interface Page {
   number: number;
@@ -42,15 +43,17 @@ const Paginator: React.FC<PaginatorProps> = ({
           </Text>
         ) : (
           <Button
-            bgColor={current === page ? "blue.500" : "gray.100"}
-            color={current === page ? "white" : "gray.700"}
+            key={page}
+            onClick={() => setCurrent(page)}
+            bgColor={current === page ? "#D1F1F0" : "gray.100"}
+            color={current === page ? "#007187" : "gray.700"}
+            fontWeight={800}
+            textDecoration="none"
             boxSize="40px"
             borderRadius="8px"
             display="flex"
             alignItems="center"
             justifyContent="center"
-            key={page}
-            onClick={() => setCurrent(page)}
           >
             {page + 1}
           </Button>
@@ -64,6 +67,7 @@ const Paginator: React.FC<PaginatorProps> = ({
             setAmount(Number(e.target.value));
             setCurrent(0);
           }}
+          {...inputCommonProps}
         >
           <option value={25}>25</option>
           <option value={50}>50</option>

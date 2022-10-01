@@ -1,6 +1,6 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import React from "react";
-import { BrowserRouter, Switch } from "react-router-dom";
+import { BrowserRouter, Routes } from "react-router-dom";
 import { useRoutes } from "../utils/hooks/useRoutes";
 
 interface WheelItProps {}
@@ -10,7 +10,7 @@ const WheelIt: React.FC<WheelItProps> = ({}) => {
   return (
     <ChakraProvider>
       <BrowserRouter>
-        <Switch>{routes}</Switch>
+        <Routes>{routes}</Routes>
       </BrowserRouter>
     </ChakraProvider>
   );

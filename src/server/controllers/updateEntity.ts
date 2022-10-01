@@ -3,6 +3,7 @@ import { parseField } from "../utils/parseData";
 import { isTypeCorrect } from "../utils/isTypeCorrect";
 import { Controller, response } from "../utils/controller";
 import { createEntity } from "./createEntity";
+import { VTSType } from "../../client/utils/funcs/fieldValueToString";
 
 export const updateEntity =
   (key: string): Controller =>
@@ -43,7 +44,7 @@ export const updateEntity =
       const relationData = data[relation.name];
       if (!relationData) continue;
       switch (relation.type) {
-        case "relatesToOne":
+        case VTSType.RelatesToOne:
           if (relationData === undefined) continue;
           if (relationData === null) {
             // @ts-ignore
@@ -68,7 +69,7 @@ export const updateEntity =
           // @ts-ignore
           entity[relation.name as keyof CrudModel] = relationEntity;
           break;
-        case "ownsOne":
+        case VTSType.OwnsOne:
           if (!entity[relation.name as keyof CrudModel]) {
             const created = await createEntity(
               relationModel,
@@ -86,8 +87,8 @@ export const updateEntity =
           );
           entity[relation.name as keyof CrudModel] = res.body;
           break;
-        case "relatesToMany":
-        case "ownsMany":
+        case VTSType.RelatesToMany:
+        case VTSType.OwnsMany:
           const savedRels = [];
           if (relationData === undefined) continue;
           for (const rel of relationData) {

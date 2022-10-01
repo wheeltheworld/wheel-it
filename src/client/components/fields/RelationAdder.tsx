@@ -12,6 +12,7 @@ import {
 import React, { useEffect, useState } from "react";
 import type { ManifestRelation } from "../../../shared/manifest";
 import { fieldValueToString } from "../../utils/funcs/fieldValueToString";
+import { getListables } from "../../utils/funcs/listables";
 import { useEntities } from "../../utils/hooks/useEntities";
 import useManifest from "../../utils/hooks/useManifest";
 import Paginator from "../Paginator";
@@ -66,6 +67,8 @@ const RelationAdder: React.FC<RelationAdderProps> = ({
     onChange(selected);
   }, [selected]);
 
+  const listables = getListables(manifest);
+
   return (
     <>
       <Flex justify="flex-end">
@@ -88,7 +91,7 @@ const RelationAdder: React.FC<RelationAdderProps> = ({
       <Table mt="20px">
         <Thead>
           <Tr>
-            {manifest?.fields.listables.map((field) => (
+            {listables.map((field) => (
               <Th key={field.name}>{field.label || field.name}</Th>
             ))}
           </Tr>
@@ -96,7 +99,7 @@ const RelationAdder: React.FC<RelationAdderProps> = ({
         <Tbody>
           {items?.map((item, i) => (
             <Tr key={i}>
-              {manifest?.fields.listables.map((field) => (
+              {listables.map((field) => (
                 <Td key={field.name}>
                   {fieldValueToString(field, item[field.name])}
                 </Td>
