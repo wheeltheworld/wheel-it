@@ -33,9 +33,6 @@
       "types": "./dist/client.esm.d.ts"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "rollup -c",
     "npmjs": "yarn build && yarn publish --no-git-tag-version --access public",
